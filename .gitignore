@@ -1,0 +1,11 @@
+.DS_Store
+__pycache__/
+.pytest_cache/
+
+# 安全边界：env/密钥/每剧配置（含人名）永不入库
+.env*
+*.pem
+*secret*
+*token*
+pre_gen_gate_config.json
+**/secrets/**
