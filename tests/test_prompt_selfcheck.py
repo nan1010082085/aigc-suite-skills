@@ -1,4 +1,4 @@
-"""prompt_selfcheck 提示词自检闸测试（5 项机检）。"""
+"""prompt_selfcheck 提示词合规闸测试（6 项机检——只拦合规风险，不拦创作发挥）。"""
 
 import sys
 from pathlib import Path
