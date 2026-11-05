@@ -36,6 +36,7 @@
 - 计费实测口径（实测项目口径，2026-10-29）：2310 镜成片 11166s → 计费约 11719s ≈ **70314 积分全剧**；每集 516–780 积分（均 ~703）；613 积分 ≈ 0.87 集
 - 出片流程三步门：`node create video`（不触发）→ `node quote`（免费预估）→ `node confirm`+`node run`（花钱门，超 ceiling 拒跑）
 - 素材挂载：`resource upload` 登记 → `node create image --import-kind local_upload --resource-id` 上画布（不生成不扣分）；删除三步 `node delete` → `node delete confirm`（签 token）→ `node delete --delete-token`
+- **成片时长=durationSeconds 精确对时（2026-11-05 ffprobe 实测）**：成片=请求时长（+0.06s 容器尾）；指令时间码只是节奏指引，覆盖超出部分被模型压缩/砍掉——分镜时间轴总长必须对上 `--duration`（prompt_selfcheck ⑦ 机检），详见 storyboard-director references/live-action-instruction-spec.md「时间轴对时」
 - **<4s 快切镜出片口径（2026-10-29）**：生成 4s（按 4s 计费 24 积分），合成时用时间轴节点毫秒级裁剪 `--clip node_xxx,trim=<起点>-<正长度毫秒>`（支持 speed/volume/muted，音频轨 `--audio-clip start=` 对位）——**无需手动剪，按分镜表时长脚本化生成 clip 参数**；提示词把关键动作放前段。备选：resource download 后本地 ffmpeg 裁
 - CLI 能力面 ↔ 界面工具映射：文本/图片/视频/音频(tts+music)/时间线/主体(element: 主素材+辅助+音色)/资产库/上传全部可 CLI 调用；**「导演工具箱/导演台」(Beta 虚拟导演) 为界面专属，CLI 契约无对应命令**
 

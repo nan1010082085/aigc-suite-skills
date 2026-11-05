@@ -130,3 +130,30 @@ def test_per_shot_limit_repeat_ok():
     prompt = GOOD_PROMPT + "\n本镜限制：生物巴掌大，在她身上慢慢爬。\n本镜限制：生物巴掌大，在她身上慢慢爬。"
     problems = prompt_selfcheck.check(prompt, [])
     assert not any("⑥" in p for p in problems), f"本镜限制重复不得误报: {problems}"
+
+
+def test_timing_mismatch_flagged():
+    # 成片实测：成片=durationSeconds，时间覆盖超长内容被压缩/砍掉——不对时必须报（⑦）
+    problems = prompt_selfcheck.check(GOOD_PROMPT, [], duration=8)  # GOOD_PROMPT 覆盖 0–12s
+    assert any("⑦" in p for p in problems), f"时间覆盖 12s ≠ 生成 8s 必须报: {problems}"
+
+
+def test_timing_match_passes():
+    # GOOD_PROMPT 覆盖 0–12s，生成时长 12s 对齐不得报
+    problems = prompt_selfcheck.check(GOOD_PROMPT, [], duration=12)
+    assert not any("⑦" in p for p in problems), f"对齐不得报 ⑦: {problems}"
+    # mm:ss 时间码式同样按覆盖对时（01:49.90—01:53.10 = 3.2s）
+    prompt = (
+        "镜头 1｜01:49.90—01:51.90｜2.00 秒｜教室：少女突然头晕，一只手抬起摸了摸额头，"
+        "指尖发白、呼吸变浅，肩上的生物顺着肩线慢慢往脖颈方向爬，动作很慢，她还在硬撑。"
+        "镜头 2｜01:51.90—01:53.10｜1.20 秒｜教室：她腿一软开始往后倒，生物仍贴着肩头，"
+        "随她后倒身体微倾，衣料摩擦，怀里的表格还抱着，过道光线照亮发丝。"
+    )
+    problems = prompt_selfcheck.check(prompt, [], duration=3.2)
+    assert not any("⑦" in p for p in problems), f"时间码式对齐不得报 ⑦: {problems}"
+
+
+def test_timing_skipped_without_duration():
+    # 未提供生成时长（如纯格式自检）则不启用 ⑦
+    problems = prompt_selfcheck.check(GOOD_PROMPT, [])
+    assert not any("⑦" in p for p in problems), f"无 duration 不得报 ⑦: {problems}"

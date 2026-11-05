@@ -18,6 +18,10 @@
    中文提示词只写中文运镜名，英文运镜词必须中译；词表见 shared/camera-dictionary.md）
 ⑤ 素材映射 refs 数量 ≤9
 ⑥ 重复块检测：【】节标题或 ≥10 字整行出现两次即报（规格块拼装手误，样本实证【光线】重复两次）
+⑦ 时间轴对时（--duration 提供时启用）：分镜时间覆盖总长必须=生成时长 ±0.5s。
+   成片实测（2026-11-05 ffprobe）：成片时长精确等于 durationSeconds，指令时间码不是模型
+   时间轴——覆盖超出部分被模型压缩/砍掉（实测 8.0s 覆盖→4.06s 成片、12.5s→8.06s）。
+   不对时=翻车重烧积分（合规/资损闸；不限创作：怎么拍随便，拍多久要对上账）
 
 用法：
 - 函数：prompt_selfcheck.check(prompt: str, refs: list[str], mode: str = "video") -> list[str]
@@ -59,8 +63,9 @@ def _prompt_length(text: str) -> int:
     return count
 
 
-def check(prompt: str, refs: List[str], mode: str = "video") -> List[str]:
-    """5 项机检，返回问题清单（空 = 通过）。mode：video（默认）/ image。"""
+def check(prompt: str, refs: List[str], mode: str = "video", duration: "float | None" = None) -> List[str]:
+    """合规机检，返回问题清单（空 = 通过）。mode：video（默认）/ image。
+    duration：生成时长（秒）；提供时启用 ⑦ 时间轴对时检查。"""
     if mode not in MODES:
         raise ValueError(f"mode 仅支持 {MODES}，收到 {mode!r}")
     problems: List[str] = []
@@ -130,24 +135,55 @@ def check(prompt: str, refs: List[str], mode: str = "video") -> List[str]:
             else:
                 seen[stripped] = 1
 
+    # ⑦ 时间轴对时（--duration 提供时启用）：时间覆盖总长 = 末镜终点 − 首镜起点。
+    #    两种时间轴（「0–3 秒」式 / 「mm:ss—mm:ss」式）各自取覆盖区间，全篇应统一一种轴。
+    if duration is not None:
+        ranges: List[tuple] = []
+        for m in re.finditer(r"(\d+(?:\.\d+)?)[–—-](\d+(?:\.\d+)?)\s*秒", prompt):
+            ranges.append((float(m.group(1)), float(m.group(2))))
+        for m in re.finditer(
+            r"(\d{1,2}):(\d{2}(?:\.\d+)?)[–—-](\d{1,2}):(\d{2}(?:\.\d+)?)", prompt
+        ):
+            to_sec = lambda mm, ss: int(mm) * 60 + float(ss)  # noqa: E731
+            ranges.append((to_sec(m.group(1), m.group(2)), to_sec(m.group(3), m.group(4))))
+        if ranges:
+            total = max(end for _, end in ranges) - min(start for start, _ in ranges)
+            if abs(total - duration) > 0.5:
+                problems.append(
+                    f"⑦ 时间轴不对时：分镜时间覆盖 {total:.1f}s ≠ 生成时长 {duration:.1f}s"
+                    "——超出内容会被模型压缩/砍掉（成片实测），调镜头秒数或生成时长对齐"
+                )
+
     return problems
 
 
 def main(argv: List[str]) -> int:
     args = argv[1:]
     mode = "video"
-    if args and args[0] == "--mode":
-        if len(args) < 2:
-            print("用法: python3 tools/prompt_selfcheck.py [--mode image|video] <prompt_file> [ref ...]", file=sys.stderr)
-            return 2
-        mode = args[1]
-        args = args[2:]
+    duration: "float | None" = None
+    while args and args[0] in ("--mode", "--duration"):
+        if args[0] == "--mode":
+            if len(args) < 2:
+                print("用法: python3 tools/prompt_selfcheck.py [--mode image|video] [--duration 秒] <prompt_file> [ref ...]", file=sys.stderr)
+                return 2
+            mode = args[1]
+            args = args[2:]
+        else:
+            if len(args) < 2:
+                print("用法: python3 tools/prompt_selfcheck.py [--mode image|video] [--duration 秒] <prompt_file> [ref ...]", file=sys.stderr)
+                return 2
+            try:
+                duration = float(args[1])
+            except ValueError:
+                print("--duration 需要数值（秒）", file=sys.stderr)
+                return 2
+            args = args[2:]
     if not args:
-        print("用法: python3 tools/prompt_selfcheck.py [--mode image|video] <prompt_file> [ref ...]", file=sys.stderr)
+        print("用法: python3 tools/prompt_selfcheck.py [--mode image|video] [--duration 秒] <prompt_file> [ref ...]", file=sys.stderr)
         return 2
     prompt = Path(args[0]).read_text(encoding="utf-8").strip()
     try:
-        problems = check(prompt, args[1:], mode=mode)
+        problems = check(prompt, args[1:], mode=mode, duration=duration)
     except ValueError as exc:
         print(str(exc), file=sys.stderr)
         return 2
