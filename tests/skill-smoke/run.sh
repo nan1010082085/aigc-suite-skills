@@ -12,11 +12,11 @@ check() {
     echo "FAIL  $label"; sed 's/^/      /' /tmp/skill-smoke.out; fail=1
   fi
 }
-check "A1 人物指令    character-studio        image" --mode image sample-character-instruction.md
-check "A2 场景指令    scene-studio            image" --mode image sample-scene-instruction.md
-check "A3 道具指令    prop-studio             image" --mode image sample-prop-instruction.md
-check "A4 分镜指令    storyboard-director     video" --mode video --duration 8 sample-storyboard-instruction.md
-check "A5 出视频指令  live-action-instruction video" --mode video --duration 8 sample-video-instruction.md
+check "A1 人物指令    character-studio        image" --mode image sample-a-character-instruction.md
+check "A2 场景指令    scene-studio            image" --mode image sample-a-scene-instruction.md
+check "A3 道具指令    prop-studio             image" --mode image sample-a-prop-instruction.md
+check "A4 分镜指令    storyboard-director     video" --mode video --duration 8 sample-a-storyboard-instruction.md
+check "A5 出视频指令  live-action-instruction video" --mode video --duration 8 sample-a-video-instruction.md
 check "B4 分镜指令    storyboard-director     video" --mode video --duration 6 sample-b-storyboard-instruction.md
 check "B5 出视频指令  live-action-instruction video" --mode video --duration 6 sample-b-video-instruction.md
 [ "$fail" = 0 ] && echo "全指令验证 PASS（7/7）"

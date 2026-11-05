@@ -6,11 +6,11 @@
 
 | 文件 | 来源 skill | 剧本 | 模式 | 生成时长 |
 |---|---|---|---|---|
-| `sample-character-instruction.md` | character-studio（基础形象设定卡·七视图） | A 现代雨夜·情绪戏 | image | — |
-| `sample-scene-instruction.md` | scene-studio（空镜+光影锁定） | A 现代雨夜·情绪戏 | image | — |
-| `sample-prop-instruction.md` | prop-studio（道具人物名片·传世做旧档） | A 现代雨夜·情绪戏 | image | — |
-| `sample-storyboard-instruction.md` | storyboard-director（三大项格式） | A 现代雨夜·情绪戏 | video | 8s |
-| `sample-video-instruction.md` | live-action-instruction-spec（多镜单视频） | A 现代雨夜·情绪戏 | video | 8s |
+| `sample-a-character-instruction.md` | character-studio（基础形象设定卡·七视图） | A 现代雨夜·情绪戏 | image | — |
+| `sample-a-scene-instruction.md` | scene-studio（空镜+光影锁定） | A 现代雨夜·情绪戏 | image | — |
+| `sample-a-prop-instruction.md` | prop-studio（道具人物名片·传世做旧档） | A 现代雨夜·情绪戏 | image | — |
+| `sample-a-storyboard-instruction.md` | storyboard-director（三大项格式） | A 现代雨夜·情绪戏 | video | 8s |
+| `sample-a-video-instruction.md` | live-action-instruction-spec（多镜单视频） | A 现代雨夜·情绪戏 | video | 8s |
 | `sample-b-storyboard-instruction.md` | storyboard-director（三大项格式） | B 古装追逃·动作戏 | video | 6s |
 | `sample-b-video-instruction.md` | live-action-instruction-spec（多镜单视频） | B 古装追逃·动作戏 | video | 6s |
 
