@@ -63,7 +63,7 @@
 〔风格段（取自风格 skill）〕+ 〔内容段（七要素的 1–4 项）〕+ 〔光影段（lighting-system 三层）〕+ 〔构图锁〕+ 〔负面段（按 backends 方言）〕
 ```
 
-- 长度：按后端方言上限（默认即梦 ≤500 字）；超限先砍内容段修饰词，风格段/构图锁不砍
+- 长度：无字数上限（2026-11-05 用户令废除红线）；每镜 ≥250 字保底写详细。长度上限属后端方言（backends.md），即梦/Seedance 无上限
 - **光影段写光影四件套**（光源位置+类型+色温/时段）并逐镜复制——同场景多镜统一最便宜的杠杆
 - **负面段按通道分流**（调研实测）：SD/SDXL 真负面框 5–15 精准词；MJ `--no` 仅 3–5 词（「without X」会被反读）；Flux/GPT-Image/Nano Banana/即梦**无负面通道**一律正向改写（「no crowds」→「empty plaza, solitary figure」）
 - **风格互斥词按风格分流**：cel 系（style-anime / style-pixar）禁入 85mm/DSLR/photorealistic/skin pores（写实词冲掉动画感）；**style-cg-refined（主风格，半写实精致 CG）反向禁入 cel 词**（平涂/描边/色块），且相机词（IMAX/Panavision/胶片/光圈）是合法武器
