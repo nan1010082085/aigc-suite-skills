@@ -1,16 +1,17 @@
 """prompt_selfcheck —— 提示词 5 项机检（storyboard-director 自检闸）。
 
 检查项：
-① 中文提示词长度双轨（mode 区分，2026-10-31 用户批）：
-   - image（出图 prompt）≤300 字（火山官方，2026-10-31 批2 报告：超长易忽略细节/缺元素）
-   - video（出视频分镜 prompt）[250, 500] 字（≥250=每镜保底用户令；≤500=现口径，
-     ⚠ 待核（批1 调研校准）；超上限回 Notion 设计变更，禁删改压缩）
+① 中文提示词长度：video ≥250 字保底（每镜保底用户令，多镜单视频按每镜分段计）。
+   **无字数上限**（2026-11-05 用户令「不应该有这种红线」废除 500 字上限；五道硬闸 1
+   本就写明每镜不限字数；苗疆合集实证 seedance_2.5 正常出片 917–1288 字）。
+   长度上限属后端方言（backends.md），即梦/seedance 无上限。
 ② 时间片格式：至少一处「\\d+[–-]\\d+ ?秒」（如 0–3 秒）
 ③ 违禁废话词：4K / 8K / 杰作 / 超清晰 / 大师作 / wallpaper（拉丁词忽略大小写）
 ④ 裸英文运镜词：pan / zoom / dolly / tilt / crane / tracking shot 以独立词形态
    出现即报（ASCII 字母数字边界，中英无空格混排同样命中；panorama/company 等不误报；
    中文提示词只写中文运镜名，英文运镜词必须中译；词表见 shared/camera-dictionary.md）
 ⑤ 素材映射 refs 数量 ≤9
+⑥ 重复块检测：【】节标题或 ≥10 字整行出现两次即报（规格块拼装手误，样本实证【光线】重复两次）
 
 用法：
 - 函数：prompt_selfcheck.check(prompt: str, refs: list[str], mode: str = "video") -> list[str]
@@ -27,14 +28,14 @@ import re
 import sys
 import unicodedata
 from pathlib import Path
-from typing import Dict, List
+from typing import List
 
 MIN_PROMPT_CHARS = 250  # 每镜 ≥250 字保底（五道硬闸 1 用户令；出视频分镜适用）
-MAX_PROMPT_CHARS_BY_MODE: Dict[str, int] = {
-    "image": 300,  # 火山官方（2026-10-31 批2 报告 H1）：中文 ≤300 字防元素缺失
-    "video": 500,  # 现口径（backends.md 即梦方言 ≤500 字）；⚠ 待核（批1 调研校准）
-}
-TIME_SLICE_PATTERN = re.compile(r"\d+[–-]\d+ ?秒")
+MODES = ("image", "video")  # 仅区分适用规则，不做字数上限（上限=后端方言，见 backends.md）
+TIME_SLICE_PATTERN = re.compile(
+    r"\d+[–—-]\d+ ?秒"  # 时间片式：0–3 秒
+    r"|\d{1,2}:\d{2}(?:\.\d+)?\s*[–—-]\s*\d{1,2}:\d{2}"  # 时间码式：01:49.90—01:51.90（2026-11-05 样本口径）
+)
 BANNED_WORDS = ["4K", "8K", "杰作", "超清晰", "大师作", "wallpaper"]
 BARE_ENGLISH_CAMERA_WORDS = ["pan", "zoom", "dolly", "tilt", "crane"]
 BARE_ENGLISH_CAMERA_PHRASES = ["tracking shot"]
@@ -54,34 +55,37 @@ def _prompt_length(text: str) -> int:
 
 def check(prompt: str, refs: List[str], mode: str = "video") -> List[str]:
     """5 项机检，返回问题清单（空 = 通过）。mode：video（默认）/ image。"""
-    if mode not in MAX_PROMPT_CHARS_BY_MODE:
-        raise ValueError(f"mode 仅支持 {sorted(MAX_PROMPT_CHARS_BY_MODE)}，收到 {mode!r}")
+    if mode not in MODES:
+        raise ValueError(f"mode 仅支持 {MODES}，收到 {mode!r}")
     problems: List[str] = []
 
-    # ① 长度双轨：image ≤300 / video [250, 500] 中文字符（mode 区分）
-    max_chars = MAX_PROMPT_CHARS_BY_MODE[mode]
+    # ① 长度：video ≥250 字保底（每镜，用户令）；无字数上限（2026-11-05 用户令废除上限红线）
     length = _prompt_length(prompt)
-    if length > max_chars:
-        if mode == "image":
-            problems.append(
-                f"① 图像提示词超过 {max_chars} 中文字符（当前 {length} 字）——火山官方：超长易忽略细节、缺元素"
-            )
-        else:
-            problems.append(
-                f"① 提示词超过 {max_chars} 中文字符（当前 {length} 字）——回 Notion 设计变更，禁止删改压缩"
-            )
     if mode == "video" and length < MIN_PROMPT_CHARS:
         problems.append(f"① 提示词不足 {MIN_PROMPT_CHARS} 中文字符（当前 {length} 字）——补细节")
 
-    # ② 时间片格式
-    if not TIME_SLICE_PATTERN.search(prompt):
-        problems.append("② 时间片格式缺失：至少一处「数字–数字 秒」（如 0–3 秒）")
+    # ② 时间片/时间码格式：多镜指令（含「镜头N」「分镜N」标记）必须带时间码；
+    #    单镜自由段落（无镜号，样本实证合法变体）豁免
+    if re.search(r"(?:镜头|分镜)\s*\d+", prompt) and not TIME_SLICE_PATTERN.search(prompt):
+        problems.append("② 时间片格式缺失：多镜指令至少一处「数字–数字 秒」或「mm:ss—mm:ss」时间码")
 
-    # ③ 违禁词（拉丁词忽略大小写）
-    lowered = prompt.lower()
-    for word in BANNED_WORDS:
-        if word.lower() in lowered:
+    # ③ 违禁词（拉丁词忽略大小写；4K/8K 按独立词+字母数字边界匹配——防色温「4800K」
+    #    与 node ID 子串（实证 node_5298y8kbk7）误杀；画幅/分辨率语境的「16:9，4K」是
+    #    分辨率声明不是废话词，跳过——语境含上一行（画幅标题与数值常分行写））
+    prev_line = ""
+    for line in prompt.splitlines():
+        lowered = line.lower()
+        context = prev_line + " " + line
+        for word in BANNED_WORDS:
+            if word in ("4K", "8K"):
+                if not re.search(rf"(?<![0-9A-Za-z]){word.lower()}(?![0-9A-Za-z])", lowered):
+                    continue
+                if "画幅" in context or "分辨率" in context:
+                    continue
+            elif word.lower() not in lowered:
+                continue
             problems.append(f"③ 含违禁废话词「{word}」，改用物理材质词描述质感")
+        prev_line = line
 
     # ④ 裸英文运镜词（不区分大小写；英文运镜词必须中译）
     # 边界用 ASCII 字母数字界定（不用 \b——Python \w 含 CJK，中英无空格混排时
@@ -102,6 +106,23 @@ def check(prompt: str, refs: List[str], mode: str = "video") -> List[str]:
     # ⑤ refs 数量 ≤9
     if len(refs) > MAX_REFS:
         problems.append(f"⑤ 素材映射 refs 超过 {MAX_REFS} 个（当前 {len(refs)}）")
+
+    # ⑥ 重复块：【】节标题重复、或 ≥10 字整行重复（规格块拼装手误）。
+    #    镜头块内的逐镜重复是设计不是手误：本镜限制/入点与动作/入画物/镜头头 行豁免
+    exempt_prefixes = ("本镜限制", "入点与动作", "入画物", "鬼物入画", "镜头", "**镜头")
+    seen: dict = {}
+    for line in prompt.splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith(exempt_prefixes):
+            continue
+        is_header = stripped.startswith("【") and stripped.endswith("】")
+        if (is_header and len(stripped) >= 3) or len(stripped) >= 10:
+            if stripped in seen:
+                if seen[stripped] == 1:  # 同块只报一次
+                    problems.append(f"⑥ 重复块「{stripped[:20]}」出现两次——规格块拼装去重")
+                    seen[stripped] = 2
+            else:
+                seen[stripped] = 1
 
     return problems
 

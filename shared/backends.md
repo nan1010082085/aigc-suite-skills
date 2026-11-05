@@ -13,7 +13,7 @@
 
 | 后端 | 工具接入前提 | 提示词方言 | 参考图语义 | 负面通道 | 验真 |
 |------|------------|-----------|-----------|---------|------|
-| **即梦 / Seedance（默认）** | dreamina + dreamina-canvas 双 CLI（**无 MCP server**，全部走命令行；dreamina 管账号/生成/query，dreamina-canvas 管画布/节点/资源/报价/模型） | 中文 ≤500 字；单次 ≤15s 超出自动分段 | 默认多参考图（说「当首帧」才走首帧）；m2v 最多 9 图，`--ref res:<uuid>` | 无真负面 → 正向改写（「画面干净、无多余文字」） | `resource get`（status=success）+ `node find` |
+| **即梦 / Seedance（默认）** | dreamina + dreamina-canvas 双 CLI（**无 MCP server**，全部走命令行；dreamina 管账号/生成/query，dreamina-canvas 管画布/节点/资源/报价/模型） | 中文无字数上限（2026-11-05 用户令废除 ≤500 红线；实证 917–1288 字正常出片）；单次 ≤15s 超出自动分段 | 默认多参考图（说「当首帧」才走首帧）；m2v 最多 9 图，`--ref res:<uuid>` | 无真负面 → 正向改写（「画面干净、无多余文字」） | `resource get`（status=success）+ `node find` |
 | **可灵 / Kling** | 可灵 MCP / API | 中文 ≤800 字量级【未校准·估计】；单次 ≤10s | 首帧/尾帧+运动笔刷语义 | 有负面词参数 | 按其任务查询接口 |
 | **海螺 / MiniMax** | mmx CLI / MCP | 中文 ≤600 字量级【未校准·估计】；单次 ≤10s | 图生视频参考帧 | 部分支持 | mmx 查询接口 |
 | **小云雀 xyq** | pippit-tool-cli（generate-image/generate-video/query-result/get-credit-balance） | 中文直传；**默认图模型=智能图片V2.5 Fast（2026-10-28 用户定；测试与常规出图一律 Fast，Pro 仅用户点名时用）**；`--ratio` 数字枚举（2=16:9/3=9:16/6=1:1）、`--resolution` 1K/2K/4K、`--effort` low→max；实测 智能图片V2.5 Pro ≈6 积分/张 1K/high | `--image` 多参考图；**i2i 排版被参考图锚定**（宫格原样复刻，文字「忽略」无效——立绘用画框锁，见 character-prompts §1.7） | 无真负面 → 正向改写 | query-result 异步轮询（**输出多行 JSON，勿 tail -1**）+ --download-dir 自动下载 |
