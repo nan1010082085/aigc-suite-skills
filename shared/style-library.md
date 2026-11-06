@@ -32,3 +32,4 @@
 | 西方玄幻 | style-fantasy | 中世纪史诗/油画质感 |
 | 无限流 | style-infinite-flow | 多元宇宙/系统UI/维度裂缝 |
 | 朋克家族 | style-cyberpunk | 赛博/蒸汽/柴油三系 |
+| 新中式国风·三渲二 | style-3d-anime 变体 | 国风/新中式题材角色设定与资产（references/new-chinese-3d-anime-spec.md） |
