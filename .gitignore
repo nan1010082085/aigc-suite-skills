@@ -12,3 +12,9 @@ pre_gen_gate_config.json
 
 # 测试内容永不入库（2026-11-10 用户令：tests/ 不上 GitHub）
 tests/
+
+# 打包产物不入库（可由 tools/build_*.py 重建；WorkBuddy 交付走上传不走 git）
+dist/
+
+# 个人工作记忆不入库（私有内容，禁上公开仓）
+.workbuddy/
