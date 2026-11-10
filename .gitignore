@@ -9,3 +9,6 @@ __pycache__/
 *token*
 pre_gen_gate_config.json
 **/secrets/**
+
+# 测试内容永不入库（2026-11-10 用户令：tests/ 不上 GitHub）
+tests/
