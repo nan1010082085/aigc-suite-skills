@@ -67,6 +67,7 @@
 - **光影段写光影四件套**（光源位置+类型+色温/时段）并逐镜复制——同场景多镜统一最便宜的杠杆
 - **负面段按通道分流**（调研实测）：SD/SDXL 真负面框 5–15 精准词；MJ `--no` 仅 3–5 词（「without X」会被反读）；Flux/GPT-Image/Nano Banana/即梦**无负面通道**一律正向改写（「no crowds」→「empty plaza, solitary figure」）
 - **风格互斥词按风格分流**：cel 系（style-anime / style-pixar）禁入 85mm/DSLR/photorealistic/skin pores（写实词冲掉动画感）；**style-cg-refined（主风格，半写实精致 CG）反向禁入 cel 词**（平涂/描边/色块），且相机词（IMAX/Panavision/胶片/光圈）是合法武器
+- **负面段不得反向排除目标风格本身**（2026-11-14 用户令）：排除句与目标质感反向=「既不要 A 也不要 B」死局，模型只能自由发挥——目标为写实质感时禁排「真人皮肤摄影质感」，目标为 cel 系时禁排「卡通/动画」类词；排除句只挡目标之外的风格方向
 - **视频层负面黑名单**（出视频指令的负面段基础词）：五官扭曲、肢体畸形、多余手指、服装错乱、角色变脸、画面闪烁、帧间漂移（视频一致性规则见 `skills/video-producer/references/video-consistency.md`）
 - 构图锁：防翻车排版禁令（禁背景混入/禁多格/禁文字气泡等，各资产模板自带）
 - t2i / i2i 选择表：
