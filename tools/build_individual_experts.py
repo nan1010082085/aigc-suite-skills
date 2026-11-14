@@ -55,7 +55,7 @@ EM = Path("/Applications/WorkBuddy.app/Contents/Resources/app.asar.unpacked/"
 OUT = ROOT / "dist/expert-packages"
 
 AUTHOR = "酉钱"
-VERSION = "1.0.0"
+VERSION = "1.0.2"
 SKIP_NAMES = {
     ".DS_Store", "Thumbs.db", "__pycache__",
     # 两个构建脚本是开发期工具，不是专家运行时闸门，不随包分发

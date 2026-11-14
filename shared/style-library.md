@@ -10,7 +10,7 @@
 | `skills/style-anime` | 日漫 / 二次元 | 校园、恋爱、热血 |
 | `skills/style-pixar` | 皮克斯质感 | 合家欢、温情、萌系 |
 | `skills/style-cyberpunk` | 赛博朋克 | 科幻、悬疑、未来都市 |
-| `skills/style-photoreal` | 写实摄影 | 纪实、年代、严肃题材（即梦链路需转 cel 防拦截，见 backends.md） |
+| `skills/style-photoreal` | 写实摄影 | 目标图或项目风格锁要求真实影像质感的题材；即梦链路不自动转 cel |
 
 ## 二、取词规则
 
@@ -32,4 +32,4 @@
 | 西方玄幻 | style-fantasy | 中世纪史诗/油画质感 |
 | 无限流 | style-infinite-flow | 多元宇宙/系统UI/维度裂缝 |
 | 朋克家族 | style-cyberpunk | 赛博/蒸汽/柴油三系 |
-| 新中式国风·三渲二 | style-3d-anime 变体 | 国风/新中式题材角色设定与资产（references/new-chinese-3d-anime-spec.md） |
+| 新中式服饰 | 先按目标图选择 style-photoreal、style-cg-refined 或 style-3d-anime，再取对应服饰词 | 服饰题材不能单独确定人物脸部比例与渲染方式；苗疆旗袍参考图的成人脸与自然肤质不得自动套大眼日漫模板 |

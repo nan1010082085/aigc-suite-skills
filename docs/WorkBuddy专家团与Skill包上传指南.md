@@ -1,6 +1,6 @@
 # 把 aigc-suite-skills 做成 WorkBuddy 专家交付物（专家团 / 独立专家 / 整套 Skill 包）
 
-> 2026-11-06 完成转化、注册、打包；同日追加「专家团拆成 3 个独立专家」；2026-11-07 剧本专家两次改名，并**冻结 18 个独立技能上架路径**，只保留 3 个独立专家 + 1 个专家团 + 1 个整套本地安装包。本文是唯一操作说明，涵盖「怎么做」「上传什么」「以后怎么维护」。
+> 2026-11-06 完成转化、注册、打包；同日追加「专家团拆成 3 个独立专家」；2026-11-07 剧本专家两次改名，并**冻结 18 个独立技能上架路径**，只保留 3 个独立专家 + 1 个专家团 + 1 个整套本地安装包。本文是唯一操作说明，涵盖「怎么做」「上传什么」「以后怎么维护」。2026-11-10 按用户决定做了一次内容取材更新，版本升至 1.1.3 / 1.0.1，见第八节更新记录。2026-11-12 苗疆实卡锚点 + 纯 t2i 实测沉淀入库，三个独立专家升 1.0.2 重打包。
 
 ## 一、结论速览
 
@@ -9,7 +9,7 @@
 | | GitHub 仓库 `nan1010082085/aigc-suite-skills` | WorkBuddy 专家团「漫剧制片厂」 |
 |---|---|---|
 | 是什么 | skill 源码仓：`skills/` + `shared/` + `tools/` + `tests/` | 平台侧独立交付物：`plugin.json` + 11 agents + 12 头像 + SOP + 版本 |
-| 版本 | git commit（仓库自己的版本） | `plugin.json` 的 `version`（现 1.1.2） |
+| 版本 | git commit（仓库自己的版本） | `plugin.json` 的 `version`（现 1.1.3） |
 | 发布 | git push；Claude Code / Cursor symlink 安装 | 开放平台「专家」货架上传 → 审核 → 手动公开发布；本机 marketplace.json 注册 |
 | 生命周期 | 独立演进 | 独立演进，不随仓库提交自动变化 |
 
@@ -68,7 +68,7 @@
 ## 四、本次修掉的五个坑（旧版 10-27 骨架的问题）
 
 1. **skill 残缺**：旧包只有 12 个 skill，且 SKILL.md 被压缩改写（如 character-studio 6351→3360 字节），36 份 `references/` 全部丢失 → 已从源仓库全量 rsync，18 个原样入库。
-2. **未注册**：marketplace.json 里没有它，专家中心看不到 → 已注册（当前 v1.1.2）。
+2. **未注册**：marketplace.json 里没有它，专家中心看不到 → 已注册（当前 v1.1.3）。
 3. **无头像**：`avatars/` 只有 .gitkeep，但 plugin.json 声明了 12 个路径 → 已生成 12 张统一画风头像（暖光卡通插画、粉紫调对应内容创作分类，512×512、≤496KB）。
 4. **SOP 顺序反了**：旧主理人写「剧本 → 分镜 → 资产」，源仓库 `shared/output-formats.md` 明确「2026-10-30 用户重排：剧本 → 素材 → 分镜」 → 已改为资产在分镜之前，`@引用` 才有落点。
 5. **两个能力域没人管**：`prop-studio`（道具资产）与 `clip-review`（成片核验回流）没有对应角色 → 新增「伍备齐 · 道具资产设计师」和「顾复之 · 成片核验与规则回流师」，同时把风格库从 5 种扩到 9 种。
@@ -96,8 +96,8 @@ python3 "$EM/scripts/register_expert.py" "$DST"
 
 1. 打开 `open.workbuddy.cn`，完成开发者入驻与认证（个人可发专家/技能，Buddy 应用需企业资质）。
 2. 左侧「发布管理」→「专家」→ 右上角「+ 创建」。
-3. **配置专家**：上传 `dist/aigc-drama-studio.zip`（5.59 MB，≤20 MB，仅 .zip，v1.1.2）。平台开包解析自动生成专家 ID。
-4. **确认信息**：核对名称「漫剧制片厂」、描述、市场分类（内容创作）、服务类目（1–5 个）；上传团队头像 `avatars/team.png`（512×512、≤500KB、PNG）；确认版本号 `1.1.2`。右侧可实时预览卡片。
+3. **配置专家**：上传 `dist/aigc-drama-studio.zip`（5.59 MB，≤20 MB，仅 .zip，v1.1.3）。平台开包解析自动生成专家 ID。
+4. **确认信息**：核对名称「漫剧制片厂」、描述、市场分类（内容创作）、服务类目（1–5 个）；上传团队头像 `avatars/team.png`（512×512、≤500KB、PNG）；确认版本号 `1.1.3`。右侧可实时预览卡片。
 5. **提交审核**：官方口径 7 个工作日，列表可查状态、可撤回。
 6. **过审后手动点「发布」并选「公开发布」** —— 这步最容易漏，不点就永远躺在后台。发布前先把开发者信息补全，否则会失败。
 
@@ -156,7 +156,7 @@ ruby -ryaml -e 'Dir.glob("**/*.md").each{|f| l=File.readlines(f,chomp:true); nex
 | `dist/expert-packages/drama-asset-designer.zip` | 70 | 664 KB | 0 error；53 篇 md 严格 YAML；引用闭包完整 |
 | `dist/expert-packages/drama-virtual-director.zip` | 57 | 625 KB | 0 error；40 篇 md 严格 YAML；引用闭包完整 |
 
-上传步骤：发布管理 →「专家」→ + 创建 → 分别上传三个 zip → 核对花名 / 职业 / 描述 / 分类（内容创作）/ 头像 `avatars/expert.png` / 版本 `1.0.0` → 提交审核 → **过审后逐个手动点「发布」并选「公开发布」**。三个名称提交后即被占用，先想好再交。
+上传步骤：发布管理 →「专家」→ + 创建 → 分别上传三个 zip → 核对花名 / 职业 / 描述 / 分类（内容创作）/ 头像 `avatars/expert.png` / 版本 `1.0.2` → 提交审核 → **过审后逐个手动点「发布」并选「公开发布」**。三个名称提交后即被占用，先想好再交。
 
 #### ⚠️ 名称重复 / 已被占用（2026-11-07，剧本专家两次改名）
 
@@ -212,14 +212,14 @@ ruby -ryaml -e 'Dir.glob("**/*.md").each{|f| l=File.readlines(f,chomp:true); nex
 ```
 /Users/yangdongnan/work/aigc-suite-skills/
 ├── dist/
-│   ├── expert-packages/                         3 个独立专家上架包（v1.0.0，各 <0.7 MB）
-│   │   ├── drama-episode-writer.zip   638 KB / 47 文件
-│   │   ├── drama-asset-designer.zip   664 KB / 70 文件
-│   │   ├── drama-virtual-director.zip 625 KB / 57 文件
+│   ├── expert-packages/                         3 个独立专家上架包（v1.0.2，各 <0.7 MB）
+│   │   ├── drama-episode-writer.zip   640 KB / 47 文件
+│   │   ├── drama-asset-designer.zip   666 KB / 70 文件
+│   │   ├── drama-virtual-director.zip 627 KB / 57 文件
 │   │   └── _retired/                           旧名包归档，勿上传
 │   │       └── drama-scriptwriter.zip
 │   ├── _retired-plugins/                        旧名插件目录归档（可还原）
-│   ├── aigc-drama-studio.zip              5.59 MB 专家团上架包（126 文件，v1.1.2）
+│   ├── aigc-drama-studio.zip              5.59 MB 专家团上架包（126 文件，v1.1.3）
 │   ├── aigc-suite-skills.zip             284 KB  整套 skill 本地安装包
 │   └── skill-packages/                           路径 B 已冻结：顶层 0 个 zip
 │       └── _retired/                            18 个旧上架包归档（可还原，勿上传）
@@ -258,7 +258,11 @@ EM="/Applications/WorkBuddy.app/Contents/Resources/app.asar.unpacked/resources/p
 
 # 1. 从仓库取一次内容（仅此次决定更新时）
 for p in skills shared tools tests; do
-  rsync -a --delete --exclude='.DS_Store' --exclude='__pycache__' --exclude='*.pyc' "$p/" "$DST/$p/"
+  rsync -a --delete \
+    --exclude='.DS_Store' --exclude='__pycache__' --exclude='*.pyc' \
+    --exclude='build_individual_experts.py' --exclude='build_platform_skill_packages.py' \
+    --exclude='material-live/' \
+    "$p/" "$DST/$p/"
 done
 
 # 2. 若增删了 skill 或角色，改专家包自己的 plugin.json 四个数组（否则校验会报路径不存在）
@@ -277,7 +281,24 @@ python3 "$EM/scripts/package_expert.py" "$DST" dist
 python3 tools/build_individual_experts.py
 ```
 
-版本号两处（都属专家团 / 上架产物这一侧，与仓库版本无关）：专家团 `plugin.json` 的 `version`（现 v1.1.2）、三个独立专家各自 `plugin.json` 的 `version`（由 `tools/build_individual_experts.py` 的 `VERSION` 统一写入，现 v1.0.0）。驳回改完重交时递增，方便追溯；两条发布线独立升版。已冻结的 `build_platform_skill_packages.py` 不再参与版本管理。
+版本号两处（都属专家团 / 上架产物这一侧，与仓库版本无关）：专家团 `plugin.json` 的 `version`（现 v1.1.3）、三个独立专家各自 `plugin.json` 的 `version`（由 `tools/build_individual_experts.py` 的 `VERSION` 统一写入，现 v1.0.2）。驳回改完重交时递增，方便追溯；两条发布线独立升版。已冻结的 `build_platform_skill_packages.py` 不再参与版本管理。
+
+### 2026-11-12 更新记录（苗疆素材实测沉淀 → 素材专家更新）
+
+- **内容变化**：苗疆 1:1 复刻 i2i 实测 6/6 验收 + 纯 t2i 实测 6/6 验收（不挂原图）的沉淀回写——`skills/style-3d-anime/references/new-chinese-3d-anime-spec.md`（实卡验收版模板、苗疆实卡锚点基线、纯 t2i 词库自足实证、t2i 文字边界）与 `shared/lessons.md`（实卡锚定法、纯 t2i 词库自足实证 + 文字边界两条新教训）。
+- **版本**：三个独立专家 1.0.1 → **1.0.2**（`tools/build_individual_experts.py` VERSION 统一写入，47 / 70 / 57 文件），已注册 + 重打包 + zip 自检通过。专家团 `aigc-drama-studio` 1.1.3 未动（如需吸收本次内容再单独升版重走审核）。
+- **实测出处**：`tests/material-live/苗疆1比1复刻-素材实测-20261112.md`、`tests/material-live/苗疆风格纯t2i素材实测-20261112.md`（tests/ 不入包，仅作追溯）。
+- **平台侧待办**：在已有条目里替换三个 zip → 版本填 1.0.2 → 提交审核 → 过审后手动「发布」→「公开发布」。
+
+### 2026-11-10 更新记录（用户决定「skill 已更新，更新 WorkBuddy 专家团」）
+
+- **取材范围**：仓库 HEAD `627dd57` 的 `skills/`（18）、`shared/`、`tools/`、`tests/`（回归用例）。本次实际内容变化来自 `659a464`（TEST 画布三问题回写 6 个文件：`shared/lessons.md`、`character-prompts.md`、`multiview-creature-spec.md`、`new-chinese-3d-anime-spec.md`、`video-producer/SKILL.md`、`production-workflow.md`）。
+- **新增排除项**：`tests/material-live/` 是本地素材测试产出（21 MB，含 mp4/png），**不进专家包**——否则 Team 包超平台 20 MB 上限；两个 `tools/build_*.py` 是开发期工具也不随包分发；另排除 `.DS_Store` / `__pycache__` / `*.pyc`。
+- **版本**：Team `aigc-drama-studio` 1.1.2 → **1.1.3**（126 文件 / 5.59 MB）；三个独立专家 1.0.0 → **1.0.1**（47 / 70 / 57 文件），由 `tools/build_individual_experts.py` 的 `VERSION` 统一写入。本机 4 个插件目录与 marketplace.json 注册已同步。
+- **从最终 zip 内复验通过**：平台字段 / 双语 / 声明资源 / 严格 YAML（92 / 30 / 53 / 40 篇 md）/ 头像 512×512 ≤500KB / ≤20MB / 引用闭包 0 断链 / 本次更新文件 hash 与仓库一致。
+- **旧件归档不删除**：`dist/_archive/2026-11-10-2356/`（4 个旧 zip + 4 个旧插件目录 + marketplace.json 备份），可还原。
+- **平台侧待办（对外动作，本次未执行）**：在**已有条目里替换 zip**，不要改名新建（改名会触发名称占用与 `profession.zh` 判重）；三个独立专家为主推，Team 为底稿；提交审核 → 过审后逐个手动「发布」→「公开发布」。
+- **边界**：`dist/aigc-suite-skills.zip`（整套本地安装包）属仓库侧交付物，不在本次专家团取材范围内，未改动；专家团更新不构成两边同步。
 
 ## 九、已知限制与兜底
 

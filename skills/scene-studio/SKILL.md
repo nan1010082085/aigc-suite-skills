@@ -30,7 +30,7 @@ description: 漫剧/短剧场景出图 skill——按剧本建场景空镜资产
 - **广告闸**：场景内商品/陈设/灯牌「素色无品牌+无文字无商标」，过 `tools/brand_scan.py`
 - **花钱门**：扣积分出图走 `tools/credit_gate.py`
 - **调用硬要求（官方：火山方舟《图片生成 API》2026-10-14）**：`watermark=false` 必设（默认打「AI 生成」水印）、返回 URL 24h 失效即时转存、prompt 中文 ≤300 字——全参数见 `references/scene-shot-light.md` §五
-- **验收清单**（`scene-library.md` §4）逐张过：无人物/光影一致/可行动空间/门向与道具连续性
+- **验收清单**（`references/scene-library.md` §4）逐张过：无人物/光影一致/可行动空间/门向与道具连续性
 - 一枪一停、重制不夹带（`shared/hard-gates.md`）
 
 ## 产出与格式

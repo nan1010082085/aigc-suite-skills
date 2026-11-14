@@ -8,7 +8,7 @@
 
 ## 二、单镜隔离生成包
 
-每镜独立打包，独立生成。**多镜单视频（2026-11-05 用户令）**：连贯戏允许多个分镜合并一条视频——一组时间码连续的镜打包成一个「多镜组生成包」，prompt.txt 内逐镜写「分镜N（时间码）」+ 入点与动作衔接上镜末态（写法见 storyboard-director `references/live-action-instruction-spec.md`）；其余结构不变，失败按时间码段归因，重生成只重跑崩坏时间段：
+每镜独立打包，独立生成。**多镜单视频（2026-11-05 用户令）**：连贯戏允许多个分镜合并一条视频——一组时间码连续的镜打包成一个「多镜组生成包」，prompt.txt 内逐镜写「分镜N（时间码）」+ 入点与动作衔接上镜末态（写法见 storyboard-director `../../storyboard-director/references/live-action-instruction-spec.md`）；其余结构不变，失败按时间码段归因，重生成只重跑崩坏时间段：
 
 ```
 镜N 生成包/
@@ -55,7 +55,7 @@
 ## 七、极简 SOP
 
 1. 整理角色卡（正面主+侧背辅，一服一卡，固定角色 ID）
-2. 虚拟导演输出全局风格规范（`../storyboard-director/references/director-brief.md` §五）
+2. 虚拟导演输出全局风格规范（`../../storyboard-director/references/director-brief.md` §五）
 3. 分镜表逐镜打包（编号｜时长｜机位｜角色+服装｜场景｜动作｜光影｜负面词）
 4. 试产 2–3 镜锁参
 5. 单镜隔离批量生成，留 2 版备选，失败归因入库
