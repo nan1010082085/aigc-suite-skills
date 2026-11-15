@@ -13,10 +13,10 @@
 
 | 后端 | 工具接入前提 | 提示词方言 | 参考图语义 | 负面通道 | 验真 |
 |------|------------|-----------|-----------|---------|------|
-| **即梦 / Seedance（默认）** | dreamina + dreamina-canvas 双 CLI（**无 MCP server**，全部走命令行；dreamina 管账号/生成/query，dreamina-canvas 管画布/节点/资源/报价/模型） | 中文无字数上限（2026-11-05 用户令废除 ≤500 红线；实证 917–1288 字正常出片）；单次 ≤15s 超出自动分段 | 默认多参考图（说「当首帧」才走首帧）；m2v 最多 9 图，`--ref res:<uuid>` | 无真负面 → 正向改写（「画面干净、无多余文字」） | `resource get`（status=success）+ `node find` |
+| **即梦 / Seedance（默认）** | dreamina + dreamina-canvas 双 CLI（**无 MCP server**，全部走命令行；dreamina 管账号/生成/query，dreamina-canvas 管画布/节点/资源/报价/模型） | 中文无字数上限（2026-11-05 用户令废除 ≤500 红线；实证 917–1288 字正常出片）；单次 ≤15s 超出自动分段 | 默认多参考图（说「当首帧」才走首帧）；多模态生成（模式枚举字面值见 schema）最多 9 图，`--ref res:<uuid>` | 无真负面 → 正向改写（「画面干净、无多余文字」） | `resource get`（status=success）+ `node find` |
 | **可灵 / Kling** | 可灵 MCP / API | 中文 ≤800 字量级【未校准·估计】；单次 ≤10s | 首帧/尾帧+运动笔刷语义 | 有负面词参数 | 按其任务查询接口 |
 | **海螺 / MiniMax** | mmx CLI / MCP | 中文 ≤600 字量级【未校准·估计】；单次 ≤10s | 图生视频参考帧 | 部分支持 | mmx 查询接口 |
-| **小云雀 xyq** | pippit-tool-cli（generate-image/generate-video/query-result/get-credit-balance） | 中文直传；**默认图模型=智能图片V2.5 Fast（2026-10-28 用户定；测试与常规出图一律 Fast，Pro 仅用户点名时用）**；`--ratio` 数字枚举（2=16:9/3=9:16/6=1:1）、`--resolution` 1K/2K/4K、`--effort` low→max；实测 智能图片V2.5 Pro ≈6 积分/张 1K/high | `--image` 多参考图；**i2i 排版被参考图锚定**（宫格原样复刻，文字「忽略」无效——立绘用画框锁，见 character-prompts §1.7） | 无真负面 → 正向改写 | query-result 异步轮询（**输出多行 JSON，勿 tail -1**）+ --download-dir 自动下载 |
+| **小云雀 xyq** | pippit-tool-cli（generate-image/generate-video/query-result/get-credit-balance） | 中文直传；**默认图模型=智能图片V2.5 Fast（2026-10-28 用户定；测试与常规出图一律 Fast，Pro 仅用户点名时用）**；`--ratio` 数字枚举（2=16:9/3=9:16/6=1:1）、`--resolution` 1K/2K/4K、`--effort` low→max；实测 智能图片V2.5 Pro ≈6 积分/张 1K/high | `--image` 多参考图；**图生图排版被参考图锚定**（宫格原样复刻，文字「忽略」无效——立绘用画框锁，见 character-prompts §1.7） | 无真负面 → 正向改写 | query-result 异步轮询（**输出多行 JSON，勿 tail -1**）+ --download-dir 自动下载 |
 | **Midjourney** | 仅手动路径（无官方 API） | 短英文 prompt + 参数尾巴（--ar 等） | 图片参考（sref/cref 语义） | `--no` 真负面 | 人工验图 |
 | **SiliconFlow（pyflow.icu 平台）** | SiliconFlow REST（`api.siliconflow.cn/v1`，Bearer key 经平台 .env 注入，不入库） | 中文 prompt 一梯队；`images/generations`（model/prompt/image_size/batch_size → images[].url）；实测模型：图像 **Qwen/Qwen-Image**（中文最强）、Qwen-Image-Edit（参考图编辑）、Tongyi-MAI/Z-Image-Turbo（快）、Kwai-Kolors/Kolors；视频 **Wan-AI/Wan2.2-T2V-A14B / I2V-A14B** | Qwen-Image-Edit 走参考图编辑语义 | Qwen 系正向改写 | 图片 URL 时效 24h，落地即下载入库 |
 | **SD / ComfyUI** | 本地 ComfyUI 工作流 | 提示词自由度高，无硬长度 | ControlNet/IP-Adapter 语义 | 真负面词表 | 本地产物 |
@@ -25,8 +25,8 @@
 
 （量级数字是起点不是枷锁——各后端版本迭代后按其官方文档校准，校准结论写回本表。）
 
-**即梦出片计价实测（2026-10-29 node quote 实测，seedance_2.0_fast_vip / 720P / 16:9 / m2v）**：
-- **模型价格矩阵（720P 实测）**：`seedance_pro_fast` **2 积分/秒**（5s=10、10s=20；仅 t2v/first_last_frame、**单参考**、时长 5–10s——**只配无脸/纯手部/空镜；角色镜禁用**，单参考无法同时锚人物+场景）；`seedance_2.0_fast_vip` 6 积分/秒（m2v 多参考 ≤9 图、4–15s，角色镜默认）；`seedance_2.0_mini` 同 6 积分/秒（无折扣）；`seedance_2.5` 20 积分/秒（≤30s、480p 起，旗舰）
+**即梦出片计价实测（2026-10-29 node quote 实测，seedance_2.0_fast_vip / 720P / 16:9 / 多模态生成）**：
+- **模型价格矩阵（720P 实测）**：`seedance_pro_fast` **2 积分/秒**（5s=10、10s=20；仅文生视频/首尾帧、**单参考**、时长 5–10s——**只配无脸/纯手部/空镜；角色镜禁用**，单参考无法同时锚人物+场景）；`seedance_2.0_fast_vip` 6 积分/秒（多模态多参考 ≤9 图、4–15s，角色镜默认）；`seedance_2.0_mini` 同 6 积分/秒（无折扣）；`seedance_2.5` 20 积分/秒（≤30s、480p 起，旗舰）（模式枚举字面值见 schema）
 - **出片提示词零压缩铁律（generation-workflow L109，2026-10-29 烧 58 积分实证）**：分镜镜块四段式=出视频指令，从 Notion 逐字节传入，禁止压缩/改写/自创描述块；run 前 SHA-256 对账 + 参考图覆盖校验（露脸角色全挂，每角色≤正面1+侧视1）双闸，任一不过禁跑。试产 2-3 镜验的是**变脸/服装/运镜**三件事（不是比模型档位），过检锁参后批量，预算含 30% 重生成余量（数值=【经验·内部】：AI 视频重生成失败率无公开统计，内部预算经验值，批4 核验 2026-10-31）
 - **6 积分/秒恒定**：4s=24、5s=30、10s=60（报价返回 `maxCredits`，confirmable 报价不扣分）
 - **生成时长下限 4s**（`--duration` min=4）：分镜 2–3s 的快切镜必须按 4s 出、剪辑裁短——计费按 `max(4, 镜时长)` 估
