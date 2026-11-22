@@ -1,0 +1,79 @@
+{
+  "project": "example-drama",
+  "script_id": "SCRIPT-v1.0",
+  "assets": [
+    {
+      "id": "CHAR-001",
+      "type": "character",
+      "display_name": "张三",
+      "parent_id": null,
+      "file": null,
+      "version": 1,
+      "status": "locked",
+      "meta": { "tier": "主要" }
+    },
+    {
+      "id": "CHAR-001-REF-001",
+      "type": "ref",
+      "display_name": "张三_主体三视图",
+      "parent_id": "CHAR-001",
+      "file": "assets/CHAR-001/REF-001.png",
+      "version": 1,
+      "status": "locked",
+      "meta": { "view": "three_view", "shot_use": "identity_anchor" }
+    },
+    {
+      "id": "CHAR-001-EXP-001",
+      "type": "expression",
+      "display_name": "张三_平静",
+      "parent_id": "CHAR-001",
+      "file": "assets/CHAR-001/EXP-001.png",
+      "version": 1,
+      "status": "draft",
+      "meta": { "emotion": "平静", "shot_use": "video_ref_ok" }
+    },
+    {
+      "id": "CHAR-001-EXP-002",
+      "type": "expression",
+      "display_name": "张三_愤怒",
+      "parent_id": "CHAR-001",
+      "file": "assets/CHAR-001/EXP-002.png",
+      "version": 1,
+      "status": "draft",
+      "meta": { "emotion": "愤怒", "shot_use": "video_ref_ok" }
+    },
+    {
+      "id": "LOC-001",
+      "type": "location",
+      "display_name": "咖啡厅室内",
+      "parent_id": null,
+      "file": "assets/LOC-001/empty.png",
+      "version": 1,
+      "status": "locked",
+      "meta": { "光影锁定": "室内暖光窗侧", "empty": true }
+    },
+    {
+      "id": "SC-001",
+      "type": "episode",
+      "display_name": "第1集",
+      "parent_id": "SCRIPT-v1.0",
+      "file": null,
+      "version": 1,
+      "status": "draft",
+      "meta": {}
+    },
+    {
+      "id": "SC-001-SH-001",
+      "type": "shot",
+      "display_name": "第1集镜1",
+      "parent_id": "SC-001",
+      "file": null,
+      "version": 1,
+      "status": "draft",
+      "meta": {
+        "refs": ["CHAR-001-REF-001", "CHAR-001-EXP-001", "LOC-001"],
+        "duration_s": 3
+      }
+    }
+  ]
+}

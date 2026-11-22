@@ -19,7 +19,7 @@ description: 漫剧/短剧场景出图 skill——按剧本建场景空镜资产
 2. **出图前置调研（固定工序）**：执行 `shared/pre-gen-research.md` 四步（与人物 skill 同工序）
 3. **场景主图（文生图）+ 镜头变体**：按 `references/scene-library.md` 选类别配方（构图/道具/光影/色调）；指令格式按 `references/scene-shot-light.md`——**镜头前缀三选一**（全景默认/中景对话/特写背景），分镜需要时同场景+同光影只换前缀出变体；**光影配套防脱节**（时段型预设：白天顺光柔和/黄昏暖侧逆光/夜单一暖顶光 + 「和角色光影匹配」）；同场景全剧一主图+按需变体
 4. **场景变体（图生图挂主图）**：剧情需要场景变化（布置/昼夜）时出变体——同机位同光影只改道具层
-5. **交付与对账**：写入 assets.json scenes[]（LOCKED 字段逐字），与分镜块 `素材映射[]` 对账——场景必挂
+5. **交付与对账**：写入 assets.json scenes[]（LOCKED 字段逐字）+ registry `LOC-00n`（**LOC=场景，勿与 SC=集 混淆**，见 `shared/id-and-registry.md`）；`素材映射[]` 写 LOC ID；场景必挂；`光影锁定` 与 LIT/同场 lighting_key 对齐
 
 ## 硬闸与自检
 

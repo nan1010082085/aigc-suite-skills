@@ -3,13 +3,14 @@
 > **LOCKED —— 本文件的字段名是锁定契约，后续任务（分镜/素材/检查）一律引用原名，禁止改名、别名、增删字段。**
 > 五个 skill 之间只通过本文件的字段契约耦合：`novel-to-drama` / `idea-to-drama` 产剧本条目 → `character-studio` / `scene-studio` / `prop-studio` 产 assets.json＋视觉元数据（lora_registry，**先建资产后写分镜**，@引用全指向已建成素材）→ `storyboard-director` 引用资产产分镜块（提示词由 prompt_compiler 按后端编译）→ `shot-qa` 产检查报告。出片后 `clip-review` 五项核验+缺陷归因+回流（核验报告为交付件）。【执行顺序 2026-10-30 用户重排：剧本 → 素材 → 分镜】
 > 字段名以本文件为唯一真相源；与任何 skill 文案冲突时，改 skill 文案，不改本契约。
+> **ID 寻址层**（CHAR/SC/LOC/EXP 等无意义编号、结构化 refs、溯源）见 `shared/id-and-registry.md`——不改本文件 LOCKED 字段名；`素材映射[]` 新产出应写 registry ID。
 
 ## 1. 剧本条目（skill：novel-to-drama / idea-to-drama）
 
 ```
 {
   集数,            // 第几集（整数，全局连续）
-  时长秒,          // 60–120 正片（30–60 仅引流切片），自动——由节拍与分镜自然成型，不硬凑（2026-10-31 校准：原 30–120，只改注释文案，字段契约本体不变）
+  时长秒,          // 正片由节拍自然成型，只保≥60；不锁上限；<60 仅引流切片（2026-11-21 蒸馏；字段名不变）
   场景节拍[],      // 节拍数组，见下
   人物[],          // 本集出场人物名，与 assets.json 的 characters.name 对齐
   本集看点,        // 一句话，句号收尾
