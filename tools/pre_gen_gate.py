@@ -5,7 +5,7 @@ G1 分镜细节：每镜≥250字；多人镜逐人（格位/外貌/动作/台�
 G2 素材关联：每镜露脸角色全部挂资产（card必有），场景必挂；溢出须登记
 G3 剧情核验：看点/钩子/名场面在镜内有落点；每镜过小说事实抽查（关键词命中）
 G4 场景纯净：引用的场景节点必须是无人空镜（registry 校验，白名单按剧目配置）
-G5 Notion 同步：矩阵 source 必须 Notion 生成；生成指令与 Notion 一致
+G5 本地项目源：矩阵须声明本地项目来源（source 含 local / project / build_matrix）；锁版路径字段若存在则文件须可读
 用法: python3 -I tools/pre_gen_gate.py <episode_matrix.json> <episode_script.md> <novel_glob> [--config CFG.json]
 剧目配置：纯净空镜白名单 / 题材语境关键词 / 角色简称别名三组数据按剧目外置，
 默认读 CWD 下 ./pre_gen_gate_config.json（模板见 tools/pre_gen_gate_config.example.json）。
@@ -69,9 +69,18 @@ def main():
         novel += open(f).read()
     fails = []
 
-    # G5 来源
-    if 'build_matrix_from_notion' not in mx.get('source', ''):
-        fails.append('G5: 矩阵非 Notion 来源')
+    # G5 本地项目源（2026-11-24：Notion 非硬闸；须可追溯到项目本地）
+    src = str(mx.get('source', '')).lower()
+    local_ok = any(k in src for k in (
+        'local', 'project', 'build_matrix', 'filesystem', 'assets.json',
+    ))
+    if not local_ok and 'notion' in src:
+        fails.append('G5: 矩阵仅标 Notion 来源——须改为项目本地源（source 含 local/project/build_matrix）')
+    elif not local_ok:
+        fails.append('G5: 矩阵缺本地项目来源（source 须含 local/project/build_matrix 等）')
+    lock_path = mx.get('lock_path') or mx.get('prompt_lock_dir')
+    if lock_path and not os.path.exists(lock_path):
+        fails.append(f'G5: 锁版路径不存在：{lock_path}')
 
     # G3 剧情核验：看点/钩子词必须在镜内出现（字面不中时查实质落点证据）
     ep_code = re.search(r'(\d{3})', os.path.basename(mx_path)).group(1)
@@ -159,7 +168,7 @@ def main():
         for f in fails: print('FAIL', f)
         print(f'✗ {len(fails)} 项不过——禁止生成')
         sys.exit(1)
-    print('✓ 五闸全过：G1分镜细节 / G2素材关联 / G3剧情落点 / G4场景纯净 / G5 Notion来源')
+    print('✓ 五闸全过：G1分镜细节 / G2素材关联 / G3剧情落点 / G4场景纯净 / G5本地项目源')
 
 if __name__ == '__main__':
     main()

@@ -31,11 +31,11 @@
 
 ### 逐字（SHA-256 级对账）
 
-出片指令必须与剧本/Notion 原始指令**逐字一致**（零压缩搬运，`shared/hard-gates.md` 第 3 节）。对账命令示例：
+出片指令必须与**本地锁版分镜/prompt**逐字一致（零压缩搬运，`shared/hard-gates.md` 第 3 节）。对账命令示例：
 
 ```bash
 # 双方同一方式提取纯文本（如剥掉 Markdown 标注头后取正文）
-printf '%s' "$(cat notion_raw.txt)"   | shasum -a 256
+printf '%s' "$(cat locked_shot.txt)"   | shasum -a 256
 printf '%s' "$(cat prompt_payload.txt)" | shasum -a 256
 # 两值一致 = 逐字搬运过闸；不一致 = 被压缩/改写/拼装/加删标注头 → FAIL，打回逐字搬运
 ```
@@ -95,7 +95,7 @@ hits += scan_text(字幕文本)             # 字幕层单独扫
 2. **取新资源**：生成后看 **`submission.resources`**，不看 node 旧快照。
 3. **createdAt 比对**：新 resource 的 `createdAt` 必须**晚于**本次提交时间戳才算本次结果；历史 success 资源一律不得当结果汇报（`shared/lessons.md` 第 7 条）。
 4. 轮询等待必须等新 resource 出现，禁止抓节点上第一条 success 交差。
-5. Notion 侧的生成状态与资源查询走 `tools/notion_mcp_client.py`（`MCP().call(...)`）；生成状态 ≠「生成中」时禁止出图/出视频（`shared/hard-gates.md` 第 2 节）。
+5. 放行状态读项目本地 `gen_status.json` 或花钱门用户批准（`shared/hard-gates.md` 第 2 节）；未放行禁止出图/出视频。Notion 查询仅当项目显式 `--notion` 启用适配时使用。
 
 配套纪律（`shared/hard-gates.md` 第 5 节）：一枪一停（出完验完再开下一枪）、原节点重跑（重试不换指令不另起炉灶）、重制不夹带（只重制目标产物）。
 

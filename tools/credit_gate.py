@@ -1,13 +1,14 @@
 """credit_gate — 花钱门（spending gate）。
 
-包装生成命令（默认 dreamina-canvas 风格；其他后端注入自定义 runner/parser，见 shared/backends.md），保证：
+包装任意生成命令（后端无关；runner/parser 可注入，见 shared/backends.md），保证：
 1. 批准为假值（None/空串等）绝不执行任何命令，直接抛 PermissionError；
 2. 批准后把积分上限 --credit-ceiling <max_credits> 透传给执行器，
    且 cmd 内预置的 --credit-ceiling 一律剥离——花钱门独占 ceiling；
 3. quote 干跑报价可注入 runner，便于离线测试；报价失败/无效必须抛错，
    禁止静默产出 None 上限。
 
-仅用 stdlib；执行器可注入（默认 subprocess.run），测试不得触达真实 CLI。
+默认 quote JSON 形状兼容常见 `{data:{totalMaxCredits,items}}`（即梦等）；
+其他后端注入自定义 quote 命令与解析即可。仅用 stdlib；测试不得触达真实 CLI。
 """
 
 from __future__ import annotations

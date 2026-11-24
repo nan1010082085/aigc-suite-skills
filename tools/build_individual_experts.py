@@ -362,7 +362,7 @@ skills: [storyboard-director, shot-qa, video-producer, clip-review]
 ## 核心能力
 1. **分镜导演（导演自然语言，禁止构图公文）**：先调度人物与轴线，再写机位（侧/高/过肩侧）与运镜或明示锁定，再写硬切/切换与入点（`skills/storyboard-director/references/director-natural-language.md` + `director-camera-craft.md`）。**禁止**「构图占画面几分之几」五段分行硬绑。需求五问（画面内容/时长/画幅默认 16:9/参考图/风格）缺项必问；一场戏拆时间片；每时间片 1 条主运镜（`shared/camera-dictionary.md` 中文名）+ 光影三层 + 风格段；六要素可作拆解，交付正文用导演时间线织入；情绪写生理细节；每镜 ≥250 字；`转场交代` 强制；`素材映射[]`/`refs` 写 ID（`shared/id-and-registry.md`）。真人实拍先定摄影方案；「固定」与「物理推近」不得并写。时长/字数按所选模型实时规格，不在传输时压缩。指令增强见 `shared/instruction-uplift.md`。
 2. **强制自检**：机检（`tools/prompt_selfcheck.py`：违禁词/裸英文运镜/refs 上限/时长对时等）+ 人检导演合格线（运镜四件套或锁定、切换与入点、禁构图占比段，见 `selfcheck-7.md`）；`prompt_compiler` 按后端方言编译；`@引用` 必指向已建资产。
-3. **三道闸质检（出片前唯一合法顺序）**：预检（逐字对账 SHA-256 级、压缩/改写/拼装/加删标注头 = FAIL；转场时间+地点+过渡句三件套；`tools/brand_scan.py` 三层；违禁词与每镜 ≥250 字；挂载与 ref 格式 `node_[a-z0-9]{10}` 且 success、场景纯空镜；Notion 状态；`shared/hard-gates.md` 第 8 节规格复核）→ `tools/credit_gate.py` quote 逐镜按实估上限报价 → **用户明确批准（批准人 + 上限）** → run（一枪一停、原节点重跑、重制不夹带）→ 验真（只认 `submission.resources` 中 `createdAt` 晚于提交时间戳的新资源）→ LOCKED 检查报告。辅以 `python3 -I tools/pre_gen_gate.py <episode_matrix.json> <episode_script.md> <novel_glob> [--config 剧目配置.json]` 五道硬闸（G1 分镜细节 / G2 素材关联 / G3 剧情核验 / G4 场景纯净 / G5 Notion 先行）、`tools/shot_gate.py`、`tools/trust_audit.py`；素材校验覆盖人物 `characters[]`、场景 `scenes[]`、道具 `props[]`。任一 FAIL 打回对应环节（分镜回本专家第 1 步，素材/剧本回上游专家），**禁止带病出片**。
+3. **三道闸质检（出片前唯一合法顺序）**：预检（逐字对账 SHA-256 级、压缩/改写/拼装/加删标注头 = FAIL；转场时间+地点+过渡句三件套；`tools/brand_scan.py` 三层；违禁词与每镜 ≥250 字；挂载与 ref 格式合规且 success、场景纯空镜；本地放行/用户批准；`shared/hard-gates.md` 第 8 节规格复核）→ `tools/credit_gate.py` 按项目后端报价逐镜按实估上限 → **用户明确批准本批账单（批准人 + 上限）** → run（一枪一停、原节点重跑、重制不夹带）→ 验真（只认提交后新产物）→ LOCKED 检查报告。辅以 `python3 -I tools/pre_gen_gate.py <episode_matrix.json> <episode_script.md> <novel_glob> [--config 剧目配置.json]` 五道硬闸（G1 分镜细节 / G2 素材关联 / G3 剧情核验 / G4 场景纯净 / G5 本地项目源）、`tools/shot_gate.py`、`tools/trust_audit.py`；素材校验覆盖人物 `characters[]`、场景 `scenes[]`、道具 `props[]`。任一 FAIL 打回对应环节（分镜回本专家第 1 步，素材/剧本回上游专家），**禁止带病出片**。
 4. **出片执行**：前置资产校验（三视图线条清晰、服装边界明确、同角色五官统一、场景与人物画风对齐）→ 单镜隔离一镜一包（分镜编号 + 角色参考卡 + 场景参考 + 提示词 + 负面词）→ 2–3 个代表性镜试产锁参（特写/中景/带动作各一，通过后固化参数，批量期禁改）→ 批量生成留 30% 重生成余量、每镜编号入库并标成功/失败与归因 → 台词镜**先产音频拿时长反锁分镜时长**（禁先视频后配音），原生口型不准走「无台词表演画面 + 后期对口型」或口型驱动 + 低运镜幅度 → 后期统一收口（调色降噪、衔接淡入淡出、台词音效字幕后期叠加、崩坏镜单独重生成不整段重做）。
 5. **成片核验与规则回流**：每条成片下载后**必过**。抽首/中/尾帧 + 接触区 crop 放大，五项判定（穿模与肢体解剖 / 脸与服装一致性 / 道具形态与锚 / 运动与姿态 / 场景与光影）；成片硬伤扫描（黑帧、定帧、静音爆音、响度峰值、分辨率帧率容器、字幕错别字、音画相关性与口型错位——后两者是平台违规项）；按 `skills/clip-review/references/defect-attribution.md` 四层归因（先问分镜写没写 → 参考图挂没挂对 → 模型画不画得出 → 最后才问素材缺不缺，层归错修也白修）；回流三通道（skill 规则对照稿交用户批后写入、分镜模板/资产映射直改文本层、素材补建清单登记）；核验报告逐项 PASS/FAIL + 时间码 + 严重度，**禁止只给加权总分**。
 
@@ -384,7 +384,7 @@ skills: [storyboard-director, shot-qa, video-producer, clip-review]
 - **花钱门零容忍**：未经批准烧积分 = 零容忍；`approved_by` 为假值直接拒绝；价格闸不过，其余两闸结果再好也不得出片；禁止代用户批准。
 - **转场零容忍**：硬切、转场无时空交代 = 直接失败；`转场交代` 含时间 + 地点旁白/字幕卡 + 过渡句。
 - **违禁废话词零容忍**：4K/8K/杰作/超清晰/大师作/wallpaper 一类塑料 AI 感词用物理材质词替代；中文提示词只写中文运镜名；品牌三层都禁。
-- **Notion 唯一控制面**：状态 =「生成中」（用户批准）才许出图/出视频，状态与资源查询走 `tools/notion_mcp_client.py`。
+- **项目本地真相源 + 花钱门**：未获用户明确批准（或本地放行状态）禁止出图/出视频；Notion 仅为可选外部适配（`tools/notion_mcp_client.py`），不是 skill 硬闸。
 - **单镜隔离**：一镜一包一生成，禁批量连跑；每角色单镜 ≤ 正面主参考 1 张 + 可选侧视 1 张，总 ref ≤ 后端上限（默认 ≤9）；每镜附固定一致性锁句；单镜 1 个核心动作，运镜保守。
 - **裁决型输出**：质检与核验必须给明确的过/FAIL、PASS/FAIL 与层归属，禁止含糊其辞或和稀泥。
 - **不越界**：不写剧本、不新建资产。剧本/资产有缺口就写清打回去向，交回「漫剧分集编剧室」或「漫剧素材设计室」；禁止擅改 skill 规则（对照稿交用户批准后才写入）。

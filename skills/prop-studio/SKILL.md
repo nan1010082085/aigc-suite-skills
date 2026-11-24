@@ -38,7 +38,7 @@ description: 漫剧/短剧道具出图 skill——道具是独立第三类素材
 - **比例参考在图**：每个道具图带比例参照物或比例标注，防剪辑时大小穿帮
 - **广告闸**：道具无品牌无商标无包装特写（`shared/hard-gates.md` §6，过 `tools/brand_scan.py`）；真实商品道具一律素色化
 - **花钱门**：扣积分出图走 `tools/credit_gate.py`；一枪一停、重制不夹带
-- **调用硬要求（官方：火山方舟《图片生成 API》2026-10-14）**：`watermark=false` 必设（默认 true 打「AI 生成」水印）、返回 URL 24h 失效即时转存、prompt 中文 ≤300 字——全参数见 `references/prop-prompts.md` §9
+- **后端调用**：按项目选定后端的实时 schema（`shared/backends.md`）；即梦/Seedream 等某一厂商的水印/URL 时效/长度建议见 `references/prop-prompts.md` §9（**适配附录，非 skill 本体硬闸**）
 - 幂等自检：新道具与既有道具撞形（同款杯/同款刀）先查重再建
 
 ## 产出与格式

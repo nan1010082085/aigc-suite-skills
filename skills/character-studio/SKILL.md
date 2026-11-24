@@ -28,7 +28,7 @@ description: 漫剧/短剧人物出图 skill——按剧本建人物资产：基
 - **文生图/图生图分工**：主体文生图文字控构图；服装/表情/立绘图生图挂主体 + 构图硬锁句（防参考图排版被锚走）
 - **广告闸**：手持物/服装商品「素色无品牌+禁包装特写」，出图前后过 `tools/brand_scan.py`
 - **花钱门**：扣积分的出图走 `tools/credit_gate.py`（报价→用户批→跑）
-- **调用参数**：以当前即梦 CLI 的 model list/schema 为准；提示词优先保留格位和角色锚点，删除重复形容词。图片尺寸、水印和长度不要从另一后端 API 直接套用；细节见 `references/character-prompts.md` §2。
+- **调用参数**：以**项目声明的生成后端**实时 model list/schema 为准（见 `shared/backends.md`）；提示词优先保留格位和角色锚点，删除重复形容词。图片尺寸、水印和长度按该后端方言，不把别家 API 参数硬套进来；某一后端的 CLI 细则见 `references/character-prompts.md` §2（适配附录，非 skill 本体）。
 - **出图验收清单**（`references/character-prompts.md` §4）逐张过：五官锚点/机位正交/服装逐件/手部完整/无品牌/表情差异
 - 设定卡模板/排版硬锁/要点：`references/character-prompts.md` §1.1（唯一出处）
 - 一枪一停、重制不夹带、验真只认新产物（`shared/hard-gates.md`）

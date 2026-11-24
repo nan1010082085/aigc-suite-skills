@@ -82,7 +82,7 @@ description: 一句话到一段想法原创漫剧/短剧分集剧本的编剧 sk
 - **搜索不搬运**：市场调研只校准冲突密度与钩子打法，禁抄同题材作品的设定/情节/名台词；搜索不可用必须声明。
 - **人物可挂资产**：`人物[]` 逐人对齐 assets.json 的 `characters.name`，露脸角色全挂；性格靠对话不用旁白。
 - **品牌三层都禁**：剧本的台词/旁白/字幕文案不得出现真实品牌（`shared/hard-gates.md` 第 6 节，交付前过 `tools/brand_scan.py`）。
-- **不烧积分**：本 skill 只产剧本，不执行生成；出图/出片必经花钱门与 Notion 审核（`shared/hard-gates.md` 第 1、2 节）。
+- **不烧积分**：本 skill 只产剧本，不执行生成；出图/出片必经花钱门与本地锁版放行（`shared/hard-gates.md` 第 1、2 节）。
 - 违禁废话词、翻车点对照 `shared/hard-gates.md` / `shared/lessons.md` 通读一遍再交付。
 
 ## 产出与格式

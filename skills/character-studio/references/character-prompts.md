@@ -163,14 +163,16 @@
 
 要点：**图生图会把参考图的宫格排版原样复制到输出**——「忽略参考图排版」「中景半身到膝」全被无视（实测复刻了三格+左上特写格）。解法：①构图锁用**正面画框描述**（「仅一名人物、仅一个画面格，无分格/无特写小图/无画中画」）②取景下缘写死具体切点（如「画面下边缘切在小腿中部」）③仍复刻排版时：参考图先裁成单人格再挂，或立绘改文生图靠锚点短语保同脸。配饰类宜补「无珠无坠」，防自添珠粒。
 
-## 2. 即梦画布 CLI 调用
+## 2. 后端调用适配附录（非 skill 本体硬闸）
 
-调用生成前逐条过（风格段/负面段方言仍按 `shared/backends.md`）：
+调用生成前按**项目声明的后端**过（风格段/负面段方言见 `shared/backends.md`）：
 
-- **长度随当前 CLI 模型规格**：不设跨后端的中文 300 字硬上限。Seedream 4.7 的当前模型目录以实际 prompt 长度约束为准；优先删除重复形容词，保留七格定位、人物身份、服装与材质必要信息。短指令也须通过同一逐格验收，不能预设它更准确。
-- **参数以当前 CLI schema 和 model list 为准**：已安装的 dreamina-canvas v1.3.0 图片节点暴露 model/mode/prompt/ratio/resolution/count/ref 等参数；没有 watermark、size、seed、strength、negative_prompt 或 sequential_image_generation flag，不把其他 API 的参数直接带入画布命令。
-- **本任务的纯文单张测试**：mode 取纯文字生成档（枚举字面值以 model list 为准）、count=1、无 ref，画幅与分辨率分别用 ratio 和 resolution 指定。保存草稿后权威报价；运行后查询终态、下载真实产物并逐格验收。无显式负面参数时，少量排除意图写在 prompt 内；不得把 API 请求成功或节点 success 当作画面通过。
-- **其他模式按实时能力选参**：需要图生图或多参考时读取对应 model list 的参考数与类型，使用当前 CLI 的类型化 ref；不得沿用另一接口的“图1/图2”或 URL 参数规则。画布资源的临时访问链接不作为唯一存档，交付文件时用 resource download 下载。
+- **长度随当前后端模型规格**：不设跨后端的中文硬上限。优先删除重复形容词，保留七格定位、人物身份、服装与材质必要信息。短指令也须通过同一逐格验收。
+- **参数以该后端实时 schema / model list 为准**：不得把别家 API 的 watermark、size、seed、strength、negative_prompt 等参数硬套进来。
+- **纯文单张测试**：取文生图档、单张、无 ref；画幅与分辨率用该后端字段指定。权威报价 → 用户批 → 再跑；产物下载后逐格验收。请求成功 ≠ 画面通过。
+- **图生图 / 多参考**：按该后端参考数与类型选参；临时 URL 不作唯一存档，须落盘项目目录。
+
+> **即梦画布（dreamina-canvas）方言示例**（仅当项目后端选即梦时）：图片节点常见 model/mode/prompt/ratio/resolution/count/ref；无 watermark 等字段；纯文单张用 mode 枚举 + count=1；下载用 `resource download`。完整契约以已安装 CLI 的 schema 为准，详见 `shared/backends.md`。
 
 ## 4. 出图验收清单（每批逐张过）
 
@@ -185,4 +187,4 @@
 8. EXP/REF/POSE 已写入 registry 且 ID 符合 `shared/id-and-registry.md`
 9. 静帧可挂：该资产可作为单镜 refs 之一（宫格审阅板标 `shot_use=review_only`）
 
-任一不过 → 修指令写回 Notion → 从 Notion 取文重抽；禁止临时改写提示词。
+任一不过 → 修指令写回**本地锁版** → 从锁版取文重抽；禁止临时改写提示词。

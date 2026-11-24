@@ -50,10 +50,20 @@
 
 ## 追加教训（同样别再犯）
 
+### 9b. 把外部协作面写成 skill 硬闸（2026-11-24）
+
+- **教训**：将 Notion「唯一控制面 / 生成状态=生成中 / 本地↔Notion SHA」写进 hard-gates 与 shot-qa，导致未开 Notion 的项目无法过闸，并把存储适配误当成创作 skill 本体。
+- **解法**：skill 只认项目本地真相源 + 花钱门用户批准；Notion（及任何外部表）降为可选适配（`shot_gate --notion`），历史接口坑保留在 lessons「仅启用 Notion 适配时」节。
+
+### 9c. 把某一 CLI / 厂商 API 写成 skill 本体（2026-11-24）
+
+- **教训**：在 character/scene/prop/hard-gates/shot-qa 写死「默认 dreamina-canvas」「火山方舟 watermark=false≤300」「即梦≤500」「直调某 CLI」——方法论被出口方言污染；测 skill 时易误走平台模板、跳过七格设定卡。
+- **解法**：skill = 创作方法；闸 = 报价提示 + 用户批；CLI = `shared/backends.md` 可插拔出口。厂商参数下沉为「适配附录」。严格过 skill 的验证计划留本机 `docs/plans/`（不上公开仓）。
+
 ### 10. 指令压缩/拼装打回
 
 - **教训**：把多段指令压成合图段、本地拼装指令再传、给指令加/删标注头——全部违反零压缩铁律。
-- **解法**：Notion 指令 = 原始数据，出片逐字搬运并 SHA-256 校验，任何「优化一下再传」都算违规。
+- **解法**：本地锁版指令 = 原始数据，出片逐字搬运并 SHA-256 校验，任何「优化一下再传」都算违规。（旧口径曾强制 Notion；2026-11-24 蒸馏为本地真相源。）
 
 ### 11. Q 版图生图锚排版
 
@@ -77,7 +87,7 @@
 - **教训**：名片随便加、重复弹出。**解法**：出场顺序表策划层标记，每角色恰好一次。
 - **教训**：BGM 乱切、音效盖台词。**解法**：音效三分层+段落制 BGM+音量铁律。
 
-## Notion 接口坑（2026-10-28 实测）
+## Notion 接口坑（2026-10-28 实测｜仅启用 Notion 适配时）
 
 - **教训**：`notion-delete-pages` 假成功——参数名是 `page_ids`（`pages` 静默无效）；且删除需**用户显式确认**，必须带 `user_confirmed: true`，否则 API 400 挡回；批量删除数组有上限（大数组报 Too big，按 ≤10 一批）。
 - **解法**：删除前先向用户展示删除清单拿确认，调用带 `user_confirmed: true`，批量 ≤10，逐批核对返回 `isError`。
@@ -110,7 +120,7 @@
 - **模型纪律（2026-10-28 用户定）**：测试与常规出图一律 **V2.5 Fast**；Pro 仅在用户点名时用——「Pro 经不起测试」。
 
 
-## Notion 建行/状态选项坑（2026-10-29 实测）
+## Notion 建行/状态选项坑（2026-10-29 实测｜仅启用 Notion 适配时）
 
 - **create-pages 挂库行的 parent 位置**：`parent` 是**顶层参数**（`{'type':'data_source_id','data_source_id':...}`），塞进单页对象里报 `Unrecognized key: "parent"`。
 - **「状态」列选项缺失 = 400 validation_error（报错体截断，极难看出真因）**：素材台账/分镜表的 status/select 列写入不存在的选项（如「生成中」）会连环 400。解法：先 `update-data-source` `ALTER COLUMN "状态" SET STATUS/SELECT(...)` 扩选项再写。两表口径已统一：素材台账=待补/生成中/已生成/已验收；分镜表=待出片/生成中/已出片/重生成（「生成中」即用户批准的生成门）。
@@ -122,17 +132,18 @@
 - **纪律**：任何探针/比价/试验节点**用后即删**（三步删除），或干脆建独立临时画布；交付前 `node find` 复核用户画布只剩应有节点。
 - **删除三步新坑**：`node delete` 的 confirmation_required 响应输出在 **stderr**（ok=false），stdout 为空——解析 stderr 取 `deletionConfirmation.updateId`，再 confirm 签 token → delete --delete-token 执行。批量删除含不存在的节点会整批拒绝（target_not_found），先 find 核对再删。
 
-## Notion 内容列往返归一化（2026-10-29 G-PARITY 实测）
+## Notion 内容列往返归一化（2026-10-29 G-PARITY 实测｜仅启用 Notion 适配时）
 
 - **坑**：镜文写入 Notion 再读回，文本会被归一化：换行→`<br />`、下划线等字符→markdown 转义（`\_`、`\*`）。逐字比对直接比 SHA 必然误报不一致。
 - **解法**：比对/取回前做**双向机械还原**（属唯一允许的机械处理）：`<br />`→换行、`\<char>`→char、行尾空白trim、`\r\n`→`\n`。工具实现见 `tools/shot_gate.py:norm()`。
-- **配套**：G-PARITY 闸=本地镜块↔Notion 内容列归一化后 SHA 级一致才准出片；生成提示词的唯一合法来源=`--emit-prompt`（从 Notion 内容列逐字取出还原后落盘，调用只准 `$(cat prompt.txt)`）。
+- **配套（适配模式）**：`--notion` 时 G-PARITY=本地镜块↔Notion 内容列归一化后 SHA；默认模式生成提示词唯一合法来源=`--emit-prompt` 从**本地镜块**写出，调用只准 `$(cat prompt.txt)`。
 
-## 出片硬闸工具（2026-10-29 五律落地）
+## 出片硬闸工具（2026-10-29 五律落地｜2026-11-24 本地默认）
 
-- `tools/shot_gate.py`（套件通用，配置驱动）：G-PARITY/G-VERBATIM/G-REFBIND/G-MODEL/G-REVIEW 五闸；`--build-registry` 从 Notion 素材台账生成 `asset_registry.json`（@锁名↔画布资源ID↔状态变体），回写「分镜锁名/状态关键词」列。
+- `tools/shot_gate.py`（套件通用，配置驱动）：G-PARITY/G-VERBATIM/G-REFBIND/G-MODEL/G-REVIEW 五闸；默认 `--build-registry` 从本地 `assets.json` 生成 `asset_registry.json`；加 `--notion` 才走外部台账。
 - G-REFBIND 按镜内状态词选变体（信物原色≠浅红）、按「景别：」选场景三变体（正则 `[^\s。：:]{1,3}` 别用 `[全中近大特]+`——「景」不在类里只抓一个字，实测翻车）。
 - 项目侧只留 `gen_gate.config.json`，禁止再写剧目一次性脚本。
+- **历史教训（已废硬闸）**：曾把「Notion 唯一控制面」写进 skill——2026-11-24 用户定案：Notion 是外部东西，不是 skill 本身；真相源=项目本地。
 
 ## 改 skill 前四步（2026-10-31 用户纠正）
 

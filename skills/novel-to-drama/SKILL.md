@@ -94,7 +94,7 @@ description: 小说/网文改编漫剧分集剧本的编剧 skill——从番茄
 - **照引风险注意（2026-10-31 入库，风险提示非禁令）**【官方·检察日报/最高检（著作权法第 24 条三步检验：法定情形+不冲突正常使用+不损害合法权益，司法从严、封闭列举）+ 专业媒体·MovieMaker Cinema Law】：短句非必然免责——承担核心表达的短语可受保护（如 "Rosebud"），使用语境影响认定；转换性不足的照搬难构成合理使用；**能拿授权就拿授权**。细则见 `references/adaptation-workflow.md` §四。
 - **人物不走样**：`人物[]` 逐人可挂资产（对齐 assets.json 的 `characters.name`），露脸角色全挂；性格靠对话不用旁白。
 - **品牌三层都禁**：剧本的台词/旁白/字幕文案不得出现真实品牌（`shared/hard-gates.md` 第 6 节，交付前过 `tools/brand_scan.py`）。
-- **不烧积分**：本 skill 只产剧本，不执行生成；出图/出片必经花钱门与 Notion 审核（`shared/hard-gates.md` 第 1、2 节）。
+- **不烧积分**：本 skill 只产剧本，不执行生成；出图/出片必经花钱门与本地锁版放行（`shared/hard-gates.md` 第 1、2 节）。
 - 违禁废话词、翻车点对照 `shared/hard-gates.md` / `shared/lessons.md` 通读一遍再交付。
 
 ## 产出与格式
