@@ -12,7 +12,7 @@ description: 小说/网文改编漫剧分集剧本的编剧 skill——从番茄
 
 - `shared/split-methodology.md` —— 拆分与改编方法论（换算锚/故事单元/连贯改编技法/每集结构模板），分集规则的唯一真相源
 - `shared/output-formats.md` —— LOCKED 剧本条目契约，字段名逐字引用（`集数` / `时长秒` / `场景节拍[]` / `人物[]` / `本集看点` / `结尾钩子`）
-- `shared/hard-gates.md` / `shared/lessons.md` —— 硬闸总纲与历史翻车点
+- `shared/hard-gates.md` —— 硬闸总纲；`shared/skill-load.md` —— 必须先读本 SKILL，禁记忆顶替
 - `shared/script-standard.md` —— **剧本内核参考**（内核五条 + 七段式载体建议），故事灵魂的参照系——**吸收 DNA 不抄格式**
 - `shared/script-craft.md` —— **剧本文风与叙事技法**（好坏对照/技法七条/三稿制/可读性验收），剧本质量的唯一真相源
 - `shared/production-priority.md` —— **剧情 > 素材 > 导演出片**；剧本层最高优先级
@@ -95,7 +95,7 @@ description: 小说/网文改编漫剧分集剧本的编剧 skill——从番茄
 - **人物不走样**：`人物[]` 逐人可挂资产（对齐 assets.json 的 `characters.name`），露脸角色全挂；性格靠对话不用旁白。
 - **品牌三层都禁**：剧本的台词/旁白/字幕文案不得出现真实品牌（`shared/hard-gates.md` 第 6 节，交付前过 `tools/brand_scan.py`）。
 - **不烧积分**：本 skill 只产剧本，不执行生成；出图/出片必经花钱门与本地锁版放行（`shared/hard-gates.md` 第 1、2 节）。
-- 违禁废话词、翻车点对照 `shared/hard-gates.md` / `shared/lessons.md` 通读一遍再交付。
+- 违禁废话词对照 `shared/hard-gates.md`；**禁止**开场通读 `lessons.md`（仅 FAIL 后查阅）。
 
 ## 产出与格式
 

@@ -14,6 +14,7 @@
 | **Gates** | 合规检查 + 花钱提示（报价→用户批本批账单→跑） | 绑死 Notion / 绑死 dreamina 的工具仪式 |
 | **Backends** | `shared/backends.md` 可插拔出口 | skill 本体；换后端只改方言，不改方法论 |
 
+**Skill 直载（强制）**：命中任务 → Read `skills/<name>/SKILL.md` → 再读其点名的 references。禁止用对话记忆 / claude-mem / `lessons` / 旧测薄稿顶替。契约：`shared/skill-load.md`。
 **真相源 = 项目本地文件**（剧本 / `assets.json` / registry / 锁版 prompt / 生成记录）。Notion 等外部表仅为可选适配。
 
 ## 流水线
