@@ -132,11 +132,11 @@ META = {
         "Break episode 3 into storyboard blocks with ready-to-generate Chinese prompts.",
     ),
     "shot-qa": (
-        "出片三道闸质检", "Three-Gate Shot QA",
-        "出图出片前跑价格闸、剧情校验、素材校验三道闸，先检查再报价，过闸才准生成。",
-        "Run price, script and asset gates before generation, with quote, approval and result verification.",
-        "这集的剧本、资产、分镜都齐了，帮我过三道闸再报价。",
-        "Script, assets and storyboards are ready. Run the three gates and quote before generating.",
+        "出片红线机检", "Shot Red-Line QA",
+        "出片前跑 prompt_selfcheck 硬停与账单批准，先机检再报价，exit0 且获批才准生成。",
+        "Hard-stop with prompt_selfcheck and spend approval before any paid generation.",
+        "这集的剧本、资产、分镜都齐了，先跑机检再报价。",
+        "Script, assets and storyboards are ready. Run selfcheck then quote before generating.",
     ),
     "video-producer": (
         "出片执行制片", "Video Production Producer",

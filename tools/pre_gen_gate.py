@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """出图/出视频五道硬闸（2026-10-19 用户令）。任一 FAIL 拒绝生成。
-G1 分镜细节：每镜≥250字；多人镜逐人（格位/外貌/动作/台词四要素）；语境关键词命中（按剧目配置）
+G1 分镜细节：每镜≥1000字（2026-11-24）；多人镜逐人（格位/外貌/动作/台词四要素）；语境关键词命中（按剧目配置）
 G2 素材关联：每镜露脸角色全部挂资产（card必有），场景必挂；溢出须登记
 G3 剧情核验：看点/钩子/名场面在镜内有落点；每镜过小说事实抽查（关键词命中）
 G4 场景纯净：引用的场景节点必须是无人空镜（registry 校验，白名单按剧目配置）
@@ -114,8 +114,8 @@ def main():
         full = s.get('full_text', '')
         body = re.sub(r'\s+', '', re.sub(r'### [^\n]+', '', full))
         # G1 细节
-        if len(body) < 250:
-            fails.append(f'G1: [{sid}] 叙事 {len(body)}字<250')
+        if len(body) < 1000:
+            fails.append(f'G1: [{sid}] 叙事 {len(body)}字<1000（须含调度/机位/运镜/动作/声音/对话）')
         if not any(kw in full for kw in CONTEXT_KEYWORDS):
             fails.append(f'G1: [{sid}] 缺题材语境（{"/".join(CONTEXT_KEYWORDS)}）')
         chars = s.get('chars_in_shot', [])

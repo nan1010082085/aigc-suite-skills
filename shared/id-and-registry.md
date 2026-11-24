@@ -84,7 +84,7 @@
 4. 关键道具：`PROP-*` 按需，总 refs 遵守后端上限（常见 ≤9）
 
 禁止：一镜挂全套 EXP / 全角度 REF。  
-宫格表情板 **不得** 作为视频唯一锚（见 `character-studio/references/character-prompts.md` §1.3）。
+九宫格表情板用于**生产与审阅**；出片 refs **不得**挂整表，只挂裁切后的单张 EXP（见 `character-studio/references/character-prompts.md` §1.3）。
 
 ## 六、溯源链
 

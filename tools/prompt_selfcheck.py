@@ -2,15 +2,15 @@
 
 定位（2026-11-05 用户令）：**一切产出、检查、校验是合规，不是限制模型、限制发挥、限制创作。**
 本闸只拦合规风险——平台审核违禁词、裸英文运镜（后端不识别=白烧积分）、多镜缺时间码（机器
-不可读）、refs 超限（素材挂载风险）、重复块（拼装手误）、每镜信息量不足（≥250 字保底）；
+不可读）、refs 超限（素材挂载风险）、重复块（拼装手误）、每镜信息量不足（≥1000 字保底）、
+   出视频缺六类写作锚（薄提纲=模型自由发挥=白烧积分）；
 不拦创作自由——字数无上限、风格/叙事/镜头语言完全放开。报「缺料」只提示补什么，不规定怎么写。
 新增检查项前自问：不拦会有什么合规或资损后果？答不上来 = 创作枷锁，不许加。
 
 检查项：
-① 中文提示词长度：video ≥250 字保底（每镜保底用户令，多镜单视频按每镜分段计）。
-   **无字数上限**（2026-11-05 用户令「不应该有这种红线」废除 500 字上限；五道硬闸 1
-   本就写明每镜不限字数；苗疆合集实证 seedance_2.5 正常出片 917–1288 字）。
-   长度上限属后端方言（backends.md），即梦/seedance 无上限。
+① 中文提示词长度：video ≥1000 字保底（2026-11-24 用户令；每镜/每条出视频锁版）。
+   **无字数上限**。调度+机位+运镜+动作+声音+对话写满后通常远超；禁止压缩到保底下。
+   **硬停**：本闸 FAIL 则禁止 quote/run（文档闸不够；见 shared/red-lines.md）。
 ② 时间片格式：至少一处「\\d+[–-]\\d+ ?秒」（如 0–3 秒）
 ③ 违禁废话词：4K / 8K / 杰作 / 超清晰 / 大师作 / wallpaper（拉丁词忽略大小写）
 ④ 裸英文运镜词：pan / zoom / dolly / tilt / crane / tracking shot 以独立词形态
@@ -40,7 +40,7 @@ import unicodedata
 from pathlib import Path
 from typing import List
 
-MIN_PROMPT_CHARS = 250  # 每镜 ≥250 字保底（五道硬闸 1 用户令；出视频分镜适用）
+MIN_PROMPT_CHARS = 1000  # 每镜 ≥1000 字保底（2026-11-24 用户令；出视频锁版适用）
 MODES = ("image", "video")  # 仅区分适用规则，不做字数上限（上限=后端方言，见 backends.md）
 TIME_SLICE_PATTERN = re.compile(
     r"\d+[–—-]\d+ ?秒"  # 时间片式：0–3 秒
@@ -50,6 +50,15 @@ BANNED_WORDS = ["4K", "8K", "杰作", "超清晰", "大师作", "wallpaper"]
 BARE_ENGLISH_CAMERA_WORDS = ["pan", "zoom", "dolly", "tilt", "crane"]
 BARE_ENGLISH_CAMERA_PHRASES = ["tracking shot"]
 MAX_REFS = 9
+# ⑧ 出视频六类写作锚必须可检出（缺一类=情节提纲=模型自由发挥；2026-11-24 红线）
+CRAFT_CLASS_PATTERNS = (
+    ("调度", re.compile(r"调度|走位|轴线|停步|入画|动线")),
+    ("机位", re.compile(r"机位|摄影机|平视|过肩|眼高")),
+    ("运镜", re.compile(r"跟拍|侧跟|缓推|急推|固定|硬切|落幅|运镜")),
+    ("动作", re.compile(r"动作|ENDS ON|入点|转身|抬手|推门|蹲|攥|抱紧")),
+    ("声音", re.compile(r"【声音】|声音|雨声|脚步|风铃|衣料|气声|＜")),
+    ("对话", re.compile(r"台词|「[^」]{2,}」|对话")),
+)
 
 
 def _prompt_length(text: str) -> int:
@@ -70,10 +79,13 @@ def check(prompt: str, refs: List[str], mode: str = "video", duration: "float | 
         raise ValueError(f"mode 仅支持 {MODES}，收到 {mode!r}")
     problems: List[str] = []
 
-    # ① 长度：video ≥250 字保底（每镜，用户令）；无字数上限（2026-11-05 用户令废除上限红线）
+    # ① 长度：video ≥1000 字保底（2026-11-24）；无字数上限
     length = _prompt_length(prompt)
     if mode == "video" and length < MIN_PROMPT_CHARS:
-        problems.append(f"① 提示词不足 {MIN_PROMPT_CHARS} 中文字符（当前 {length} 字）——补细节")
+        problems.append(
+            f"① 提示词不足 {MIN_PROMPT_CHARS} 中文字符（当前 {length} 字）"
+            "——禁止压缩；须写满调度/机位/运镜/分镜动作/声音/对话；FAIL=禁出片"
+        )
 
     # ② 时间片/时间码格式：多镜指令（含「镜头N」「分镜N」标记）必须带时间码；
     #    单镜自由段落（无镜号，样本实证合法变体）豁免
@@ -153,6 +165,16 @@ def check(prompt: str, refs: List[str], mode: str = "video", duration: "float | 
                     f"⑦ 时间轴不对时：分镜时间覆盖 {total:.1f}s ≠ 生成时长 {duration:.1f}s"
                     "——超出内容会被模型压缩/砍掉（成片实测），调镜头秒数或生成时长对齐"
                 )
+
+    # ⑧ 出视频六类写作锚：缺任一类=情节提纲，模型自由发挥（资损；红线硬停）
+    if mode == "video":
+        missing = [name for name, pat in CRAFT_CLASS_PATTERNS if not pat.search(prompt)]
+        if missing:
+            problems.append(
+                "⑧ 缺写作锚：" + "、".join(missing)
+                + "（须可检出：调度·机位·运镜·动作·声音·对话）"
+                "——禁止只写情节摘要让生成模型自由发挥"
+            )
 
     return problems
 

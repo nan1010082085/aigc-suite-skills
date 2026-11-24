@@ -29,7 +29,7 @@
         style-*（风格段，一部剧锁 1 种）
                     clip-review（成片核验与回流）─────────────────────────────┤
                                                                                 ▼
-                                                              shot-qa（三道闸）─→ video-producer ─→ 成片
+                                                              shot-qa（红线机检）─→ video-producer ─→ 成片
 ```
 
 ## Skills（18 个）
@@ -40,7 +40,7 @@
 | 资产 | `character-studio` 人物 ｜ `scene-studio` 场景 ｜ `prop-studio` 道具（分工见下节） |
 | 分镜 | `storyboard-director` 虚拟导演 + 提示词工程（后端可插拔） |
 | 执行 | `video-producer` 出视频（单镜隔离/试产锁参/容错收口/时间轴对时） |
-| 质检 | `shot-qa` 出片三道闸 + 五道硬闸预检（先检查再花钱） |
+| 质检 | `shot-qa` 红线机检硬停 + 矩阵预检（先机检再花钱；见 `shared/red-lines.md`） |
 | 回流 | `clip-review` 成片核验与规则回流（一次翻车=一条新规） |
 | 风格 | `style-cg-refined`（主）/ `style-3d-anime` / `style-anime` / `style-comic` / `style-pixar` / `style-cyberpunk` / `style-fantasy` / `style-infinite-flow` / `style-photoreal`（9 种，一部剧锁 1 种全剧不换） |
 
@@ -60,10 +60,10 @@
 
 | 闸 | 工具 | 拦什么 |
 |----|------|--------|
-| 提示词合规闸（7 项机检） | `tools/prompt_selfcheck.py` | 平台违禁词、裸英文运镜、多镜缺时间码、refs>9、重复块、每镜 <250 字保底、时间轴不对时 |
-| 出图/出视频五道硬闸 | `tools/pre_gen_gate.py` | 分镜细节保底、素材关联、剧情核验、场景纯净（空镜）、**本地项目源** |
-| 花钱门 | `tools/credit_gate.py` | 扣积分前报价提示、**本批账单**用户批准才跑（不绑死某一工具），一枪一停 |
-| 广告闸 | `tools/brand_scan.py` | 品牌/商标/包装词（道具一律素色化） |
+| 出视频锁版机检（硬停） | `tools/prompt_selfcheck.py` | ≥**1000** 中文字、**六类写作锚**、违禁词、对时等；**exit≠0 禁止报价出片**（见 `shared/red-lines.md`） |
+| 矩阵预检 | `tools/pre_gen_gate.py` | 分镜细节≥1000、素材关联、剧情核验、场景纯净、本地项目源 |
+| 花钱 | `tools/credit_gate.py` | 报价→**本批**批准→跑；未批禁止扣费 |
+| 广告 | `tools/brand_scan.py` | 品牌/商标/包装词 |
 
 ## 测试
 
