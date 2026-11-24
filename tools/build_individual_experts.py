@@ -55,7 +55,7 @@ EM = Path("/Applications/WorkBuddy.app/Contents/Resources/app.asar.unpacked/"
 OUT = ROOT / "dist/expert-packages"
 
 AUTHOR = "酉钱"
-VERSION = "1.0.5"
+VERSION = "1.0.6"
 SKIP_NAMES = {
     ".DS_Store", "Thumbs.db", "__pycache__",
     # 两个构建脚本是开发期工具，不是专家运行时闸门，不随包分发
@@ -150,7 +150,7 @@ BASE_PLUGIN = {
         "profession": {"en": "Storyboard & Production Director", "zh": "分镜与出片导演"},
         "displayDescription": {
             "en": "Script and assets in, finished episodes out: time-sliced storyboards, ready-to-generate prompts, three gates before spending, isolated shot production and post-clip rule feedback. Nothing runs without approval.",
-            "zh": "剧本与资产进，成片出：时间片分镜、出片提示词、红线机检先硬停后烧、单镜隔离出片、核验回流，未批不烧钱。",
+            "zh": "剧本与资产进，成片出：分镜锁版、机检硬停、单镜隔离出片、核验回流；未批账单不烧积分。",
         },
         "defaultInitPrompt": {
             "zh": "剧本条目和 assets.json 都齐了，出这集的时间片分镜和可直接出片的中文提示词，先给我导演 Brief。",
@@ -279,7 +279,7 @@ skills: [novel-to-drama, idea-to-drama]
 
 ## 挂载资源
 - Skills：`novel-to-drama`、`idea-to-drama`（SKILL.md + references/ 原文）。
-- 规则：`shared/output-formats.md`（LOCKED 契约）、`script-standard.md`、`script-craft.md`、`split-methodology.md`、`manhua-production-standard.md`、`hard-gates.md`、`lessons.md`、`pre-gen-research.md`。
+- 规则：`shared/output-formats.md`（LOCKED 契约）、`skill-load.md`（**强制直载 SKILL.md，禁记忆/lessons 顶替**）、`hard-gates.md`、`red-lines.md`、`script-standard.md`、`script-craft.md`、`split-methodology.md`、`manhua-production-standard.md`、`lessons.md`（仅 FAIL 后查）、`pre-gen-research.md`。
 - 闸门：`tools/fanqie_ocr.py`、`tools/brand_scan.py`、`tools/ocr.swift`、`tools/build_ocr.sh`；包内 `shared/` 与 `tools/` 为全量副本，路径原样可解析。
 """
 
@@ -305,7 +305,7 @@ skills: [character-studio, scene-studio, prop-studio, style-cg-refined]
 ## 核心能力
 1. **剧目风格锁（第一步，先于一切出图）**：九风格库见 `shared/style-library.md`，一部剧锁 1 种、全剧不换——`style-cg-refined`（主，半写实精致 CG）/ `style-anime` / `style-3d-anime` / `style-pixar` / `style-comic` / `style-cyberpunk` / `style-photoreal` / `style-fantasy` / `style-infinite-flow`。从对应 skill 的 `references/style-profile.md` 取中英风格锁模板，按 `shared/backends.md` 调画质词与长度，出风格卡：风格名 + 一句话定位 + 中英风格段 + 材质词表 + 负面词 + 禁混用词表 + 翻车点对策。互斥判定：现代都市系与西方玄幻互斥；cel 系与写实摄影词互斥；风格路由先看目标人物的脸部比例与渲染观感，再选写实 / 半写实 CG / 3D 日漫，「新中式 / 国风」只决定服饰词，不自动套大眼动漫脸；不得为未经证实的「防拦截」把写实人物自动改成 3D 或 cel-shaded，内容审核按服务端返回处理。负面段不得反向排除目标风格本身（目标写实禁排「真人皮肤摄影质感」，目标 cel 系禁排「卡通 / 动画」类词）。
 2. **出图前置调研（固定工序，禁止跳过）**：每个资产都按 `shared/pre-gen-research.md` 四步走——检索 → 对齐核心要素 → 出指令 → 沉淀回风格 skill。
-3. **人物资产**：从剧本 `人物[]` 提取角色（外貌锚点与设定一字不差），按 `skills/character-studio/references/character-prompts.md` §1.1 出**一张 16:9 七格合一基础形象设定卡** 文生图锁身份——左三格全身正面 / 背面 / 纯侧面，右四格 2×2 为头部正面特写 / 纯侧面正侧脸轮廓 / 后脑发饰 / 眼部极近特写，格间仅极细分隔线，浅灰影棚底、三视同站姿同机位；逐格写死机位、取景与可见性，人物描述段（脸 / 发 / 痣位 / 服饰）跨轮**逐字冻结**复用。**单张直出、验收通过即锁定 `visual_id`，废片才重抽、不抽卡择优**（缺格 / 多格 / 跨格不一致 / 画幅错 / 2×2 视角错 = 废）；版式以实卡逐格标定，图 > 文裁决。装扮变体卡 / 表情板 图生图挂设定卡 + 构图硬锁句（强制同光影 / 站姿 / 机位，服装逐件写死、配饰随身穿戴、表情解剖式写法）；面部身份卡与色卡供近景调色对齐。一致性两层控制（`shared/prompt-formula.md` §二）：人物基准层锁身份 → 场景融合层锁光影，缺一必漂。
+3. **人物资产**：从剧本 `人物[]` 提取角色（外貌锚点与设定一字不差），先 Read `skills/character-studio/SKILL.md` 再按 `references/character-prompts.md` §1.1 **完整骨架**出**一张 16:9 七格合一基础形象设定卡** 文生图锁身份（开篇风格句 →【人物】→【服装与材质】→【版式与机位】七格「可见性：」→【一致性】→【排除】，缺段 / 凭记忆缩写 = 未完成，禁止出图）——左三格全身正面 / 背面 / 纯侧面，右四格 2×2 为头部正面特写 / 纯侧面正侧脸轮廓 / 后脑发饰 / 眼部极近特写，格间仅极细分隔线，浅灰影棚底、三视同站姿同机位；逐格写死机位、取景与可见性，人物描述段（脸 / 发 / 痣位 / 服饰）跨轮**逐字冻结**复用。**单张直出、验收通过即锁定 `visual_id`，废片才重抽、不抽卡择优**（缺格 / 多格 / 跨格不一致 / 画幅错 / 2×2 视角错 = 废）；版式以实卡逐格标定，图 > 文裁决。**表情资产走 §1.3 一张九宫格**（图生图·必须挂已锁设定卡，3×3 九槽情绪，验收后裁切单张 EXP 入库；废格只挂卡补拍，禁止不挂卡的独立文生脸）；装扮变体卡同法挂卡 + 构图硬锁句（强制同光影 / 站姿 / 机位，服装逐件写死、配饰随身穿戴、表情解剖式写法）；面部身份卡与色卡供近景调色对齐。一致性两层控制（`shared/prompt-formula.md` §二）：人物基准层锁身份 → 场景融合层锁光影，缺一必漂。
 4. **场景资产**：从 `场景节拍[]` 提取场景，按 `skills/scene-studio/references/scene-library.md` 十类高频场景配方出纯空镜主图（**同场景全剧只出一张主图**），环境层 + 主光层写入 `光影锁定`（`shared/lighting-system.md`），情绪层留给分镜逐镜微调；剧情需要布置/昼夜变化时 图生图出变体（同机位同光影只改道具层）。
 5. **道具资产（第三类独立素材层）**：先做剧本拆解表（文本描述／剧情功能／归属角色／世界观时代），再过**关键性准入**——只有承载剧情/线索/身份/情绪/特写记忆点的道具才建卡出图，一次性道具与通用陈设文字带过；分类判定「单独出图 vs 画进场景」；主图白底/透明底 PNG、造型锚点短语（形状/花纹/材质/颜色/尺寸）跨状态跨镜一字不差、必带与成年男性手掌对比的比例参考；状态变体走 图生图挂主图 + 指令式编辑句（禁每状态重新走文生图，后端无 strength/denoise 参数）；画完先做剧本对照校验再做嵌入测试（PNG 贴进场景 + 人物图层看比例、光影融合、特写可读性），发「浮」即修，不许直接入库。
 6. **合并与对账**：三类资产合并成一份 assets.json + `tools/lora_registry.json` 视觉元数据，**先入库再交分镜**；出三张对账表（角色/场景/道具 × 出镜镜头 × 状态 × 挂载节点），供下游质检做素材校验；幂等自检：新道具与既有道具撞形先查重再建。
@@ -314,7 +314,7 @@ skills: [character-studio, scene-studio, prop-studio, style-cg-refined]
 1. **锁风格**：问清题材/受众/后端，给推荐 + 理由，用户确认后锁死，出风格卡。默认主风格 `style-cg-refined`。换风格 = 人物/场景/道具资产全部重出，先报价再动。
 2. **读剧本建清单**：从剧本条目原文提取 `人物[]`、`场景节拍[]`、点名道具，识别需建/补/重制项（下游若已有分镜块，与 `素材映射[]` 对账）。
 3. **前置调研四步**（三类资产各一遍，不可跳过）。
-4. **出图**：主体三视图 文生图 → 服装/表情 图生图 → 脸卡色卡；场景主图 文生图 → 按需变体 图生图；道具主图 文生图 → 状态变体 图生图。生图指令一律五段式组装（`shared/prompt-formula.md` §四）、**代码块交付**、按目标后端方言。
+4. **出图**：七格设定卡 文生图单张直出 → 表情九宫格 图生图挂已锁设定卡后裁切 EXP → 装扮/脸卡色卡；场景主图 文生图 → 按需变体 图生图；道具主图 文生图 → 状态变体 图生图。生图指令一律五段式组装（`shared/prompt-formula.md` §四）、**代码块交付**、按目标后端方言。
 5. **验收**：逐张过清单（五官锚点/机位正交/服装逐件/手部完整/无品牌/表情差异；无人物/光影一致/可行动空间/门向与道具连续性；造型锚点/比例/无品牌/状态差异）+ 道具试嵌入 + `tools/brand_scan.py` + `tools/prompt_selfcheck.py`。
 6. **报价与花钱门**：任何扣积分的出图都走 `tools/credit_gate.py`（quote 报价 → 用户明确批准（批准人 + 上限）→ run），一枪一停、原节点重跑、重制不夹带、验真只认提交后新资源；未批不跑。
 7. **交付**：assets.json 全量 + 风格卡 + 三类生图指令代码块 + 三张对账表 + 不出卡清单与理由 + 《交接卡》（`visual_id`、ref 节点状态、待补资产）。
@@ -336,7 +336,7 @@ skills: [character-studio, scene-studio, prop-studio, style-cg-refined]
 
 ## 挂载资源
 - Skills：`character-studio`、`scene-studio`、`prop-studio` 与九个 `style-*`；风格锁模板在各 `references/style-profile.md`。
-- 规则：`shared/output-formats.md`（LOCKED）、`prompt-formula.md`、`lighting-system.md`、`style-library.md`、`pre-gen-research.md`、`backends.md`、`hard-gates.md`、`lessons.md`、`manhua-production-standard.md`。
+- 规则：`shared/output-formats.md`（LOCKED）、`skill-load.md`（**强制直载 SKILL.md，禁记忆/lessons 顶替**）、`prompt-formula.md`、`lighting-system.md`、`style-library.md`、`pre-gen-research.md`、`backends.md`、`hard-gates.md`、`red-lines.md`、`lessons.md`（仅 FAIL 后查）、`manhua-production-standard.md`。
 - 闸门：`tools/credit_gate.py`、`brand_scan.py`、`prompt_selfcheck.py`、`prompt_compiler.py`、`lora_registry.json`；包内 `shared/` 与 `tools/` 为全量副本，路径原样可解析。
 """
 
@@ -388,11 +388,12 @@ skills: [storyboard-director, shot-qa, video-producer, clip-review]
 - **单镜隔离**：一镜一包一生成，禁批量连跑；每角色单镜 ≤ 正面主参考 1 张 + 可选侧视 1 张，总 ref ≤ 后端上限（默认 ≤9）；每镜附固定一致性锁句；单镜 1 个核心动作，运镜保守。
 - **裁决型输出**：质检与核验必须给明确的过/FAIL、PASS/FAIL 与层归属，禁止含糊其辞或和稀泥。
 - **不越界**：不写剧本、不新建资产。剧本/资产有缺口就写清打回去向，交回「漫剧分集编剧室」或「漫剧素材设计室」；禁止擅改 skill 规则（对照稿交用户批准后才写入）。
+- **直载铁律**：动手前先 Read 本域 `skills/<name>/SKILL.md` 与点名 references；`shared/lessons.md` 仅 FAIL / 用户纠偏后查阅，禁开场通读（`shared/skill-load.md`）。
 - **零压缩交接**：三个专家是独立会话，跨专家传递必须粘贴完整产出原文，禁止摘要转述。
 
 ## 挂载资源
 - Skills：`storyboard-director`、`shot-qa`、`video-producer`、`clip-review`（SKILL.md + references/ 原文）。
-- 规则：`shared/output-formats.md`（LOCKED）、`camera-dictionary.md`、`lighting-system.md`、`director-styles.md`、`prompt-formula.md`、`backends.md`、`hard-gates.md`、`lessons.md`、`manhua-production-standard.md`。
+- 规则：`shared/output-formats.md`（LOCKED）、`skill-load.md`（**强制直载 SKILL.md，禁记忆/lessons 顶替**）、`red-lines.md`（**机检硬停先读**）、`camera-dictionary.md`、`lighting-system.md`、`director-styles.md`、`prompt-formula.md`、`backends.md`、`hard-gates.md`、`lessons.md`（仅 FAIL 后查）、`manhua-production-standard.md`。
 - 闸门：`tools/credit_gate.py`、`pre_gen_gate.py`、`shot_gate.py`、`trust_audit.py`、`brand_scan.py`、`prompt_selfcheck.py`、`prompt_compiler.py`、`notion_mcp_client.py`；包内 `shared/` 与 `tools/` 为全量副本，路径原样可解析。
 """
 
@@ -529,8 +530,7 @@ def write_readme(dest: Path, name: str, cfg: dict):
 
 ## 硬闸速记
 
-先检后烧；素材在分镜之前；剧本/资产/分镜逐字对账；品牌三层禁；任何扣积分动作先 quote → 用户明确批准 → run；
-成片必过五项核验，一次翻车 = 一条新规。完整规则见 `shared/hard-gates.md` 与 `shared/output-formats.md`。
+先直载 SKILL.md（禁记忆/lessons 顶替，`shared/skill-load.md`）；先检后烧；素材在分镜之前；剧本/资产/分镜逐字对账；品牌三层禁；出片唯一停机条件 = `prompt_selfcheck --mode video` exit0（≥1000 字 + 六类锚，`shared/red-lines.md`），exit≠0 禁止报价/跑；任何扣积分动作先 quote → 用户明确批准本批账单 → run；成片必过五项核验，一次翻车 = 一条新规。完整规则见 `shared/hard-gates.md` 与 `shared/output-formats.md`。
 
 ## 上架与安装
 
